@@ -78,15 +78,19 @@
     display: none;
   }
 
-  /* Enhanced glass effects with better depth */
+  /* Optimized glass effects with hardware acceleration */
   .glass-effect {
-    @apply backdrop-blur-[24px] bg-white/[0.08] border border-white/[0.12] shadow-xl;
-    backdrop-filter: blur(24px) saturate(180%);
+    @apply backdrop-blur-[20px] bg-white/[0.08] border border-white/[0.12] shadow-xl;
+    backdrop-filter: blur(20px) saturate(150%);
+    transform: translateZ(0);
+    will-change: transform;
   }
   
   .glass-card {
-    @apply backdrop-blur-[24px] bg-white/[0.08] border border-white/[0.12] shadow-xl hover:bg-white/[0.14] transition-all duration-500 hover:shadow-2xl hover:border-white/20;
-    backdrop-filter: blur(24px) saturate(180%);
+    @apply backdrop-blur-[20px] bg-white/[0.08] border border-white/[0.12] shadow-xl hover:bg-white/[0.14] transition-all duration-300 hover:shadow-2xl hover:border-white/20;
+    backdrop-filter: blur(20px) saturate(150%);
+    transform: translateZ(0);
+    will-change: transform;
   }
   
   .glass-nav {
@@ -106,7 +110,9 @@
   }
   
   .card-hover {
-    @apply transition-all duration-500 hover:translate-y-[-8px] hover:shadow-2xl hover:scale-[1.02];
+    @apply transition-all duration-300 hover:translate-y-[-6px] hover:shadow-xl hover:scale-[1.01];
+    transform: translateZ(0);
+    will-change: transform;
   }
   
   .link-underline {
@@ -121,9 +127,11 @@
     backdrop-filter: blur(24px) saturate(180%);
   }
   
-  /* Enhanced hover effects */
+  /* Optimized hover effects with hardware acceleration */
   .hover-lift {
-    @apply transition-all duration-500 ease-out hover:translate-y-[-10px] hover:shadow-2xl hover:scale-[1.02];
+    @apply transition-all duration-300 ease-out hover:translate-y-[-8px] hover:shadow-xl hover:scale-[1.01];
+    transform: translateZ(0);
+    will-change: transform;
   }
   
   /* Dynamic gradient backgrounds */
@@ -224,7 +232,7 @@
   text-align: left;
 }
 
-/* Mobile optimizations */
+/* Mobile optimizations with performance improvements */
 @media (max-width: 640px) {
   .container {
     padding-left: 1rem;
@@ -232,7 +240,19 @@
   }
   
   .glass-effect, .glass-card {
-    backdrop-blur: blur(16px);
+    backdrop-filter: blur(12px);
+  }
+  
+  /* Reduce animations on mobile for better performance */
+  .card-hover, .hover-lift {
+    transition-duration: 200ms;
+  }
+  
+  /* Optimize for touch devices */
+  @media (hover: none) {
+    .hover-lift:hover {
+      transform: none;
+    }
   }
 }
 

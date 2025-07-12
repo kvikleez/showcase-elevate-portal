@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useMemo, useCallback } from 'react';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import { ArrowDown, ExternalLink, Github, Sparkles } from 'lucide-react';
 import * as THREE from 'three';
@@ -12,28 +12,31 @@ const HeroSection: React.FC = () => {
   const [textIndex, setTextIndex] = useState(0);
   const { toast } = useToast();
   
-  const titles = [
+  // Memoized titles array for performance
+  const titles = useMemo(() => [
     "Full-Stack Developer",
     "Mobile App Engineer", 
     "UI/UX Designer",
     "AI Enthusiast"
-  ];
+  ], []);
   
   const x = useMotionValue(0);
   const y = useMotionValue(0);
   
-  const springConfig = { damping: 50, stiffness: 100 };
+  // Memoized spring config for performance
+  const springConfig = useMemo(() => ({ damping: 50, stiffness: 100 }), []);
   const springX = useSpring(x, springConfig);
   const springY = useSpring(y, springConfig);
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+  // Optimized mouse move handler with useCallback
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
     
-    x.set((e.clientX - centerX) / (rect.width / 2) * -20);
-    y.set((e.clientY - centerY) / (rect.height / 2) * -20);
-  };
+    x.set((e.clientX - centerX) / (rect.width / 2) * -15);
+    y.set((e.clientY - centerY) / (rect.height / 2) * -15);
+  }, [x, y]);
 
   useEffect(() => {
     const currentTitle = titles[textIndex];
@@ -222,14 +225,15 @@ const HeroSection: React.FC = () => {
     };
   }, []);
 
-  const showEasterEgg = () => {
+  // Memoized easter egg handler
+  const showEasterEgg = useCallback(() => {
     toast({
       title: "You found an Easter egg!",
       description: "Thanks for exploring my portfolio in detail. There are more hidden surprises waiting to be discovered!",
       variant: "default",
       duration: 5000,
     });
-  };
+  }, [toast]);
 
   return (
     <section 

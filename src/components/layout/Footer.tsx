@@ -1,25 +1,31 @@
-import { Link } from 'react-router-dom'
 
-const Footer = () => {
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { Github, Linkedin, Twitter, Mail, ArrowUpRight } from 'lucide-react';
+
+const Footer: React.FC = () => {
   return (
-    <footer className="border-t bg-background">
-      <div className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          {/* Brand Section */}
-          <div className="space-y-4">
-            <div className="flex items-center space-x-2">
-              <div className="h-6 w-6 rounded bg-primary" />
-              <span className="font-bold">Showcase Portal</span>
-            </div>
-            <p className="text-sm text-muted-foreground">
-              A modern web application built with React, TypeScript, and Tailwind CSS.
+    <footer className="border-t border-muted">
+      <div className="container mx-auto px-4 py-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {/* Personal Brand */}
+          <div>
+            <h2 className="text-xl font-bold tracking-tight mb-4">Suchandra Etti</h2>
+            <p className="text-muted-foreground mb-4">
+              A passionate B.Tech CSE student with a flair for technology and innovation.
             </p>
+            <div className="flex space-x-4">
+              <SocialIcon href="https://github.com/SnvvSuchandraEtti" icon={<Github className="h-5 w-5" />} label="GitHub" />
+              <SocialIcon href="https://www.linkedin.com/in/suchandra-etti/" icon={<Linkedin className="h-5 w-5" />} label="LinkedIn" />
+              <SocialIcon href="https://x.com/snvvs369" icon={<Twitter className="h-5 w-5" />} label="Twitter" />
+              <SocialIcon href="mailto:snvvvs369@gmail.com" icon={<Mail className="h-5 w-5" />} label="Email" />
+            </div>
           </div>
-          
-          {/* Navigation Links */}
-          <div className="space-y-4">
-            <h3 className="font-semibold">Navigation</h3>
-            <ul className="space-y-2 text-sm">
+
+          {/* Quick Links */}
+          <div>
+            <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
+            <ul className="space-y-2">
               <li>
                 <Link to="/" className="text-muted-foreground hover:text-primary transition-colors">
                   Home
@@ -27,7 +33,17 @@ const Footer = () => {
               </li>
               <li>
                 <Link to="/about" className="text-muted-foreground hover:text-primary transition-colors">
-                  About
+                  About Me
+                </Link>
+              </li>
+              <li>
+                <Link to="/projects" className="text-muted-foreground hover:text-primary transition-colors">
+                  Projects
+                </Link>
+              </li>
+              <li>
+                <Link to="/skills" className="text-muted-foreground hover:text-primary transition-colors">
+                  Skills
                 </Link>
               </li>
               <li>
@@ -37,39 +53,58 @@ const Footer = () => {
               </li>
             </ul>
           </div>
-          
-          {/* Resources */}
-          <div className="space-y-4">
-            <h3 className="font-semibold">Resources</h3>
-            <ul className="space-y-2 text-sm">
+
+          {/* Contact */}
+          <div>
+            <h3 className="text-lg font-semibold mb-4">Contact Information</h3>
+            <ul className="space-y-2 text-muted-foreground">
               <li>
-                <a href="https://docs.lovable.dev" className="text-muted-foreground hover:text-primary transition-colors">
-                  Documentation
+                <a href="mailto:snvvvs369@gmail.com" className="hover:text-primary transition-colors inline-flex items-center">
+                  snvvvs369@gmail.com <ArrowUpRight className="ml-1 h-3 w-3" />
                 </a>
               </li>
               <li>
-                <a href="https://github.com" className="text-muted-foreground hover:text-primary transition-colors">
-                  GitHub
+                <a href="tel:+917989635988" className="hover:text-primary transition-colors inline-flex items-center">
+                  +91 7989635988 <ArrowUpRight className="ml-1 h-3 w-3" />
                 </a>
               </li>
+              <li>Aditya University</li>
+              <li>Andhra Pradesh, India</li>
             </ul>
           </div>
-          
-          {/* Contact Info */}
-          <div className="space-y-4">
-            <h3 className="font-semibold">Contact</h3>
-            <p className="text-sm text-muted-foreground">
-              Built with Lovable
-            </p>
-          </div>
         </div>
-        
-        <div className="mt-8 pt-8 border-t text-center text-sm text-muted-foreground">
-          <p>&copy; 2024 Showcase Portal. Built with modern web technologies.</p>
+
+        <div className="mt-12 pt-8 border-t border-muted flex flex-col md:flex-row justify-between items-center gap-4">
+          <p className="text-sm text-muted-foreground">
+            &copy; {new Date().getFullYear()} Suchandra Etti. All rights reserved.
+          </p>
+          <p className="text-sm text-muted-foreground">
+            Designed & Built with ❤️ | B.Tech CSE @ Aditya University
+          </p>
         </div>
       </div>
     </footer>
-  )
+  );
+};
+
+interface SocialIconProps {
+  href: string;
+  icon: React.ReactNode;
+  label: string;
 }
 
-export default Footer
+const SocialIcon: React.FC<SocialIconProps> = ({ href, icon, label }) => {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="p-2 rounded-full bg-muted hover:bg-primary/10 hover:text-primary transition-colors"
+      aria-label={label}
+    >
+      {icon}
+    </a>
+  );
+};
+
+export default Footer;

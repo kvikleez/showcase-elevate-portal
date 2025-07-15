@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MessageCircle, X, Send, Mic, MicOff } from 'lucide-react';
+import { MessageCircle, X, Send, Mic, MicOff, Volume2, VolumeX } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -24,12 +24,13 @@ declare global {
 const EnhancedChatbot: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isListening, setIsListening] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
   const [message, setMessage] = useState('');
   const [conversation, setConversation] = useState<Message[]>([
     { 
       id: '1', 
       sender: 'bot', 
-      text: "Hello! I'm Suchandra's AI assistant. How can I help you today?",
+      text: "Hello! I'm Suchandra's AI assistant with real-time portfolio updates. How can I help you today?",
       timestamp: new Date()
     }
   ]);
@@ -38,6 +39,7 @@ const EnhancedChatbot: React.FC = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const recognition = useRef<any>(null);
+  const synthesis = useRef<SpeechSynthesis | null>(null);
 
   const toggleChat = () => setIsOpen(!isOpen);
 
@@ -91,17 +93,59 @@ const EnhancedChatbot: React.FC = () => {
     }
   }, []);
 
+  // Initialize text-to-speech
+  useEffect(() => {
+    if ('speechSynthesis' in window) {
+      synthesis.current = window.speechSynthesis;
+    }
+  }, []);
+
   const startListening = () => {
-    if (recognition.current) {
-      setIsListening(true);
-      recognition.current.start();
+    if (recognition.current && !isListening) {
+      try {
+        setIsListening(true);
+        recognition.current.start();
+      } catch (error) {
+        console.error('Speech recognition start error:', error);
+        setIsListening(false);
+      }
     }
   };
 
   const stopListening = () => {
-    if (recognition.current) {
-      recognition.current.stop();
-      setIsListening(false);
+    if (recognition.current && isListening) {
+      try {
+        recognition.current.stop();
+        setIsListening(false);
+      } catch (error) {
+        console.error('Speech recognition stop error:', error);
+        setIsListening(false);
+      }
+    }
+  };
+
+  const speakText = (text: string) => {
+    if (synthesis.current && !isSpeaking) {
+      // Stop any ongoing speech
+      synthesis.current.cancel();
+      
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = 0.9;
+      utterance.pitch = 1;
+      utterance.volume = 0.8;
+      
+      utterance.onstart = () => setIsSpeaking(true);
+      utterance.onend = () => setIsSpeaking(false);
+      utterance.onerror = () => setIsSpeaking(false);
+      
+      synthesis.current.speak(utterance);
+    }
+  };
+
+  const stopSpeaking = () => {
+    if (synthesis.current && isSpeaking) {
+      synthesis.current.cancel();
+      setIsSpeaking(false);
     }
   };
 
@@ -213,9 +257,25 @@ const EnhancedChatbot: React.FC = () => {
                   <p className="text-sm leading-relaxed whitespace-pre-wrap">
                     {msg.text}
                   </p>
-                  <p className="text-xs opacity-60 mt-2">
-                    {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                  </p>
+                  <div className="flex items-center justify-between mt-2">
+                    <p className="text-xs opacity-60">
+                      {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </p>
+                    {msg.sender === 'bot' && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => isSpeaking ? stopSpeaking() : speakText(msg.text)}
+                        className="h-6 w-6 p-0 opacity-60 hover:opacity-100"
+                        disabled={isLoading}
+                      >
+                        {isSpeaking ? 
+                          <VolumeX className="h-3 w-3" /> : 
+                          <Volume2 className="h-3 w-3" />
+                        }
+                      </Button>
+                    )}
+                  </div>
                 </motion.div>
               ))}
               

@@ -55,15 +55,37 @@ const EnhancedChatbot: React.FC = () => {
       const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
       recognition.current = new SpeechRecognition();
       recognition.current.continuous = false;
-      recognition.current.interimResults = false;
+      recognition.current.interimResults = true;
+      recognition.current.lang = 'en-US';
+      
+      recognition.current.onstart = () => {
+        setIsListening(true);
+      };
       
       recognition.current.onresult = (event) => {
-        const transcript = event.results[0][0].transcript;
-        setMessage(transcript);
+        let finalTranscript = '';
+        let interimTranscript = '';
+        
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          const transcript = event.results[i][0].transcript;
+          if (event.results[i].isFinal) {
+            finalTranscript += transcript;
+          } else {
+            interimTranscript += transcript;
+          }
+        }
+        
+        if (finalTranscript) {
+          setMessage(prev => prev + finalTranscript);
+        }
+      };
+      
+      recognition.current.onend = () => {
         setIsListening(false);
       };
       
-      recognition.current.onerror = () => {
+      recognition.current.onerror = (event) => {
+        console.error('Speech recognition error:', event.error);
         setIsListening(false);
       };
     }

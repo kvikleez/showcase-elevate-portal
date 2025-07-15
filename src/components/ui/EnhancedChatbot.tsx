@@ -59,6 +59,7 @@ const EnhancedChatbot: React.FC = () => {
       recognition.current.continuous = false;
       recognition.current.interimResults = true;
       recognition.current.lang = 'en-US';
+      recognition.current.maxAlternatives = 1;
       
       recognition.current.onstart = () => {
         setIsListening(true);
@@ -66,19 +67,16 @@ const EnhancedChatbot: React.FC = () => {
       
       recognition.current.onresult = (event) => {
         let finalTranscript = '';
-        let interimTranscript = '';
         
         for (let i = event.resultIndex; i < event.results.length; i++) {
           const transcript = event.results[i][0].transcript;
           if (event.results[i].isFinal) {
             finalTranscript += transcript;
-          } else {
-            interimTranscript += transcript;
           }
         }
         
         if (finalTranscript) {
-          setMessage(prev => prev + finalTranscript);
+          setMessage(prev => prev + finalTranscript + ' ');
         }
       };
       
@@ -89,6 +87,12 @@ const EnhancedChatbot: React.FC = () => {
       recognition.current.onerror = (event) => {
         console.error('Speech recognition error:', event.error);
         setIsListening(false);
+        
+        if (event.error === 'not-allowed') {
+          alert('Microphone access denied. Please allow microphone access and try again.');
+        } else if (event.error === 'network') {
+          console.warn('Network error - trying offline recognition');
+        }
       };
     }
   }, []);

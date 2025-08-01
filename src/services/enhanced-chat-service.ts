@@ -296,25 +296,71 @@ class EnhancedAIEngine {
   }
 }
 
+async function callGeminiAPI(messages: ChatMessage[]): Promise<string> {
+  try {
+    const response = await fetch('/functions/v1/gemini-chat', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+      },
+      body: JSON.stringify({ messages }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`API call failed: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data.message || "I apologize, but I couldn't generate a response.";
+  } catch (error) {
+    console.error('Gemini API call error:', error);
+    return "I'm experiencing technical difficulties. Please try again.";
+  }
+}
+
 // Global instance with real-time updates
 const enhancedEngine = new EnhancedAIEngine();
 
 export async function enhancedChatCompletion(messages: ChatMessage[]): Promise<ChatResponse> {
-  // Realistic response time with speech processing consideration
-  await new Promise(resolve => setTimeout(resolve, Math.random() * 800 + 300));
-  
   const lastUserMessage = messages.filter(m => m.role === 'user').pop();
   
   if (!lastUserMessage) {
     return {
-      message: "👋 Hi! I'm Suchandra's AI assistant with real-time portfolio updates. How can I help you explore his impressive tech journey?",
+      message: "Hello! I'm Suchandra's AI assistant. I can help you learn about projects, skills, experience, and more. What would you like to know?",
       type: 'suggestion',
       tokens: 25,
-      suggestions: ['Show me projects', 'What are your skills?', 'Tell me about experience', 'Contact information'],
+      suggestions: [
+        "Show me recent projects",
+        "What are the key skills?", 
+        "Tell me about work experience",
+        "Any certifications?"
+      ],
       confidence: 1.0
     };
   }
   
+  // Try AI-powered response first, fall back to local knowledge
+  try {
+    const aiResponse = await callGeminiAPI(messages);
+    if (aiResponse && !aiResponse.includes('technical difficulties')) {
+      return {
+        message: aiResponse,
+        type: 'text',
+        tokens: aiResponse.length,
+        confidence: 0.9,
+        suggestions: [
+          "Tell me more about this",
+          "What else can you show me?",
+          "Any recent updates?"
+        ]
+      };
+    }
+  } catch (error) {
+    console.error('AI response failed, using local knowledge:', error);
+  }
+  
+  // Fallback to local knowledge
   const intent = enhancedEngine.analyzeIntent(lastUserMessage.content);
   return enhancedEngine.generateResponse(intent, lastUserMessage.content);
 }

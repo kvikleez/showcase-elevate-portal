@@ -165,11 +165,10 @@ const NavLink: React.FC<NavLinkProps> = ({ to, active, children }) => {
       {active && (
         <motion.span
           layoutId="navbar-indicator"
-          className="absolute bottom-0 left-1/2 w-1 h-1 rounded-full bg-primary"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
+          className="absolute inset-0 rounded-lg bg-gradient-to-r from-primary/20 to-accent/20 -z-10"
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.3 }}
-          style={{ x: '-50%', bottom: '-2px' }}
         />
       )}
     </Link>

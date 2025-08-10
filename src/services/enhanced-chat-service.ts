@@ -296,13 +296,12 @@ class EnhancedAIEngine {
   }
 }
 
-async function callGeminiAPI(messages: ChatMessage[]): Promise<string> {
+async function callAIAPI(messages: ChatMessage[]): Promise<string> {
   try {
-    const response = await fetch('/functions/v1/gemini-chat', {
+    const response = await fetch('https://pnhlgkoxsgxhiyesbtqh.supabase.co/functions/v1/ai-chat', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
       },
       body: JSON.stringify({ messages }),
     });
@@ -312,9 +311,9 @@ async function callGeminiAPI(messages: ChatMessage[]): Promise<string> {
     }
 
     const data = await response.json();
-    return data.message || "I apologize, but I couldn't generate a response.";
+    return data.message?.content || "I apologize, but I couldn't generate a response.";
   } catch (error) {
-    console.error('Gemini API call error:', error);
+    console.error('AI API call error:', error);
     return "I'm experiencing technical difficulties. Please try again.";
   }
 }
@@ -342,7 +341,7 @@ export async function enhancedChatCompletion(messages: ChatMessage[]): Promise<C
   
   // Try AI-powered response first, fall back to local knowledge
   try {
-    const aiResponse = await callGeminiAPI(messages);
+    const aiResponse = await callAIAPI(messages);
     if (aiResponse && !aiResponse.includes('technical difficulties')) {
       return {
         message: aiResponse,

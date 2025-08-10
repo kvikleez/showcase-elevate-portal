@@ -298,6 +298,8 @@ class EnhancedAIEngine {
 
 async function callAIAPI(messages: ChatMessage[]): Promise<string> {
   try {
+    console.log('🔄 Attempting AI API call with messages:', messages.length);
+    
     const response = await fetch('https://pnhlgkoxsgxhiyesbtqh.supabase.co/functions/v1/ai-chat', {
       method: 'POST',
       headers: {
@@ -306,15 +308,21 @@ async function callAIAPI(messages: ChatMessage[]): Promise<string> {
       body: JSON.stringify({ messages }),
     });
 
+    console.log('📡 AI API response status:', response.status);
+
     if (!response.ok) {
-      throw new Error(`API call failed: ${response.status}`);
+      const errorText = await response.text();
+      console.error('❌ AI API error response:', errorText);
+      throw new Error(`API call failed: ${response.status} - ${errorText}`);
     }
 
     const data = await response.json();
+    console.log('✅ AI API response data:', data);
+    
     return data.message?.content || "I apologize, but I couldn't generate a response.";
   } catch (error) {
-    console.error('AI API call error:', error);
-    return "I'm experiencing technical difficulties. Please try again.";
+    console.error('💥 AI API call error:', error);
+    throw error;
   }
 }
 
@@ -341,8 +349,12 @@ export async function enhancedChatCompletion(messages: ChatMessage[]): Promise<C
   
   // Try AI-powered response first, fall back to local knowledge
   try {
+    console.log('🚀 Calling AI API for user message:', lastUserMessage.content);
     const aiResponse = await callAIAPI(messages);
-    if (aiResponse && !aiResponse.includes('technical difficulties')) {
+    console.log('🎯 AI Response received:', aiResponse.substring(0, 100) + '...');
+    
+    if (aiResponse && !aiResponse.includes('technical difficulties') && !aiResponse.includes('AI services are not configured')) {
+      console.log('✅ Using AI response');
       return {
         message: aiResponse,
         type: 'text',
@@ -354,9 +366,11 @@ export async function enhancedChatCompletion(messages: ChatMessage[]): Promise<C
           "Any recent updates?"
         ]
       };
+    } else {
+      console.log('⚠️ AI response not usable, falling back to local');
     }
   } catch (error) {
-    console.error('AI response failed, using local knowledge:', error);
+    console.error('💥 AI response failed, using local knowledge:', error);
   }
   
   // Fallback to local knowledge

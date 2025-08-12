@@ -1,10 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MessageCircle, X, Send, Mic, MicOff } from 'lucide-react';
+import { MessageCircle, X, Send, User, Bot, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
 import { enhancedChatCompletion } from '@/services/enhanced-chat-service';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface Message {
   id: string;
@@ -13,31 +14,30 @@ interface Message {
   timestamp: Date;
 }
 
-// Extend Window interface for speech recognition
-declare global {
-  interface Window {
-    SpeechRecognition?: any;
-    webkitSpeechRecognition?: any;
-  }
-}
+const suggestionButtons = [
+  "Show me recent projects",
+  "What are the key skills?",
+  "Tell me about work experience",
+  "Any certifications?"
+];
 
 const EnhancedChatbot: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isListening, setIsListening] = useState(false);
   const [message, setMessage] = useState('');
   const [conversation, setConversation] = useState<Message[]>([
     { 
       id: '1', 
       sender: 'bot', 
-      text: "Hello! I'm Suchandra's AI assistant. How can I help you today?",
+      text: "Hello! I'm Suchandra's AI assistant. I can help you explore projects, skills, experience, and more. What would you like to know?",
       timestamp: new Date()
     }
   ]);
   const [isLoading, setIsLoading] = useState(false);
+  const [showSuggestions, setShowSuggestions] = useState(true);
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const recognition = useRef<any>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const isMobile = useIsMobile();
 
   const toggleChat = () => setIsOpen(!isOpen);
 
@@ -49,54 +49,26 @@ const EnhancedChatbot: React.FC = () => {
     scrollToBottom();
   }, [conversation]);
 
-  // Initialize speech recognition
-  useEffect(() => {
-    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-      recognition.current = new SpeechRecognition();
-      recognition.current.continuous = false;
-      recognition.current.interimResults = false;
-      
-      recognition.current.onresult = (event) => {
-        const transcript = event.results[0][0].transcript;
-        setMessage(transcript);
-        setIsListening(false);
-      };
-      
-      recognition.current.onerror = () => {
-        setIsListening(false);
-      };
-    }
-  }, []);
-
-  const startListening = () => {
-    if (recognition.current) {
-      setIsListening(true);
-      recognition.current.start();
-    }
+  const handleSuggestionClick = (suggestion: string) => {
+    setMessage(suggestion);
+    setShowSuggestions(false);
+    handleSubmitMessage(suggestion);
   };
 
-  const stopListening = () => {
-    if (recognition.current) {
-      recognition.current.stop();
-      setIsListening(false);
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!message.trim()) return;
+  const handleSubmitMessage = async (messageText: string) => {
+    if (!messageText.trim()) return;
 
     const userMessage: Message = {
       id: Date.now().toString(),
       sender: 'user',
-      text: message,
+      text: messageText,
       timestamp: new Date()
     };
 
     setConversation(prev => [...prev, userMessage]);
     setMessage('');
     setIsLoading(true);
+    setShowSuggestions(false);
 
     try {
       const response = await enhancedChatCompletion([
@@ -104,7 +76,7 @@ const EnhancedChatbot: React.FC = () => {
           role: msg.sender === 'user' ? 'user' as const : 'assistant' as const,
           content: msg.text
         })),
-        { role: 'user' as const, content: message }
+        { role: 'user' as const, content: messageText }
       ]);
 
       const botMessage: Message = {
@@ -129,23 +101,38 @@ const EnhancedChatbot: React.FC = () => {
     }
   };
 
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    handleSubmitMessage(message);
+  };
+
   return (
     <>
       {/* Floating Button */}
       <motion.div
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
-        className="fixed bottom-8 right-8 z-50"
+        className={cn(
+          "fixed z-50",
+          isMobile ? "bottom-4 right-4" : "bottom-8 right-8"
+        )}
       >
         <Button
           onClick={toggleChat}
-          className="h-16 w-16 rounded-full shadow-lg bg-primary hover:bg-primary/90 transition-colors"
+          className={cn(
+            "rounded-full shadow-lg bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 transition-all duration-300",
+            isMobile ? "h-12 w-12" : "h-14 w-14"
+          )}
         >
           <motion.div
             animate={{ rotate: isOpen ? 180 : 0 }}
-            transition={{ duration: 0.2 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
           >
-            {isOpen ? <X className="h-6 w-6" /> : <MessageCircle className="h-6 w-6" />}
+            {isOpen ? (
+              <X className={cn("text-primary-foreground", isMobile ? "h-5 w-5" : "h-6 w-6")} />
+            ) : (
+              <MessageCircle className={cn("text-primary-foreground", isMobile ? "h-5 w-5" : "h-6 w-6")} />
+            )}
           </motion.div>
         </Button>
       </motion.div>
@@ -157,24 +144,37 @@ const EnhancedChatbot: React.FC = () => {
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            transition={{ duration: 0.2 }}
-            className="fixed bottom-28 right-8 w-96 h-[600px] z-40 rounded-2xl overflow-hidden shadow-2xl bg-background border border-border"
+            transition={{ duration: 0.3, ease: "easeOut" }}
+            className={cn(
+              "fixed z-40 rounded-2xl overflow-hidden shadow-xl bg-background/95 backdrop-blur-lg border border-border/50",
+              isMobile 
+                ? "bottom-20 left-4 right-4 top-4 h-auto max-h-[calc(100vh-6rem)]" 
+                : "bottom-20 right-8 w-96 h-[600px]"
+            )}
           >
             {/* Header */}
-            <div className="p-6 bg-background border-b border-border">
+            <div className="px-4 py-3 bg-gradient-to-r from-background to-background/80 border-b border-border/30">
               <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="font-medium text-lg">AI Assistant</h3>
-                  <p className="text-sm text-muted-foreground">How can I help?</p>
+                <div className="flex items-center gap-2">
+                  <div className="p-1.5 rounded-full bg-gradient-to-r from-primary/20 to-primary/10">
+                    <Sparkles className="h-4 w-4 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-sm">AI Assistant</h3>
+                    <p className="text-xs text-muted-foreground">Powered by Gemini</p>
+                  </div>
                 </div>
-                <Button variant="ghost" size="sm" onClick={toggleChat} className="h-8 w-8 p-0">
-                  <X className="h-4 w-4" />
+                <Button variant="ghost" size="sm" onClick={toggleChat} className="h-7 w-7 p-0 hover:bg-muted/50">
+                  <X className="h-3.5 w-3.5" />
                 </Button>
               </div>
             </div>
             
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-6 space-y-6 h-[calc(600px-180px)]">
+            <div className={cn(
+              "flex-1 overflow-y-auto p-4 space-y-4",
+              isMobile ? "h-[calc(100vh-240px)]" : "h-[calc(600px-140px)]"
+            )}>
               {conversation.map((msg) => (
                 <motion.div
                   key={msg.id}
@@ -182,35 +182,73 @@ const EnhancedChatbot: React.FC = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.2 }}
                   className={cn(
-                    "max-w-[80%] p-4 rounded-2xl",
-                    msg.sender === 'user' 
-                      ? "bg-primary text-primary-foreground ml-auto" 
-                      : "bg-muted mr-auto"
+                    "flex gap-2 max-w-[85%]",
+                    msg.sender === 'user' ? "ml-auto flex-row-reverse" : "mr-auto"
                   )}
                 >
-                  <p className="text-sm leading-relaxed whitespace-pre-wrap">
-                    {msg.text}
-                  </p>
-                  <p className="text-xs opacity-60 mt-2">
-                    {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                  </p>
+                  <div className={cn(
+                    "flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-xs",
+                    msg.sender === 'user' 
+                      ? "bg-primary text-primary-foreground" 
+                      : "bg-muted"
+                  )}>
+                    {msg.sender === 'user' ? <User className="h-3.5 w-3.5" /> : <Bot className="h-3.5 w-3.5" />}
+                  </div>
+                  <div className={cn(
+                    "px-3 py-2 rounded-2xl text-sm leading-relaxed",
+                    msg.sender === 'user' 
+                      ? "bg-primary text-primary-foreground rounded-br-md" 
+                      : "bg-muted rounded-bl-md"
+                  )}>
+                    <p className="whitespace-pre-wrap break-words">{msg.text}</p>
+                    <p className="text-xs opacity-60 mt-1">
+                      {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </p>
+                  </div>
                 </motion.div>
               ))}
+              
+              {/* Suggestion Buttons */}
+              {showSuggestions && conversation.length === 1 && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: 0.2 }}
+                  className="flex flex-wrap gap-2 max-w-[85%] mr-auto"
+                >
+                  {suggestionButtons.map((suggestion, index) => (
+                    <Button
+                      key={index}
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleSuggestionClick(suggestion)}
+                      className="text-xs h-8 px-3 hover:bg-primary hover:text-primary-foreground transition-colors"
+                    >
+                      {suggestion}
+                    </Button>
+                  ))}
+                </motion.div>
+              )}
               
               {/* Typing Indicator */}
               {isLoading && (
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="max-w-[80%] p-4 rounded-2xl bg-muted mr-auto"
+                  className="flex gap-2 max-w-[85%] mr-auto"
                 >
-                  <div className="flex items-center gap-2">
-                    <div className="flex gap-1">
-                      <div className="w-2 h-2 rounded-full bg-muted-foreground animate-bounce"></div>
-                      <div className="w-2 h-2 rounded-full bg-muted-foreground animate-bounce delay-100"></div>
-                      <div className="w-2 h-2 rounded-full bg-muted-foreground animate-bounce delay-200"></div>
+                  <div className="w-7 h-7 rounded-full bg-muted flex items-center justify-center">
+                    <Bot className="h-3.5 w-3.5" />
+                  </div>
+                  <div className="px-3 py-2 rounded-2xl bg-muted rounded-bl-md">
+                    <div className="flex items-center gap-2">
+                      <div className="flex gap-1">
+                        <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground animate-bounce"></div>
+                        <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground animate-bounce delay-100"></div>
+                        <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground animate-bounce delay-200"></div>
+                      </div>
+                      <span className="text-xs text-muted-foreground">Thinking...</span>
                     </div>
-                    <span className="text-xs text-muted-foreground">Thinking...</span>
                   </div>
                 </motion.div>
               )}
@@ -219,17 +257,16 @@ const EnhancedChatbot: React.FC = () => {
             </div>
             
             {/* Input Area */}
-            <div className="p-6 border-t border-border bg-background">
-              <form onSubmit={handleSubmit} className="flex gap-3 items-end">
+            <div className="p-4 border-t border-border/30 bg-background/50">
+              <form onSubmit={handleSubmit} className="flex gap-2 items-center">
                 <div className="flex-1">
-                  <Textarea
-                    ref={textareaRef}
+                  <Input
+                    ref={inputRef}
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                     placeholder="Type your message..."
                     disabled={isLoading}
-                    className="min-h-0 resize-none border-0 shadow-none focus-visible:ring-0 p-0 bg-transparent"
-                    rows={1}
+                    className="border-border/30 bg-background/50 focus-visible:ring-1 focus-visible:ring-primary/30 text-sm"
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' && !e.shiftKey) {
                         e.preventDefault();
@@ -239,25 +276,14 @@ const EnhancedChatbot: React.FC = () => {
                   />
                 </div>
                 
-                <div className="flex gap-2">
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={isListening ? stopListening : startListening}
-                    className={cn("h-8 w-8 p-0", isListening && "text-primary")}
-                  >
-                    {isListening ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
-                  </Button>
-                  
-                  <Button
-                    type="submit"
-                    disabled={!message.trim() || isLoading}
-                    className="h-8 w-8 p-0"
-                  >
-                    <Send className="h-4 w-4" />
-                  </Button>
-                </div>
+                <Button
+                  type="submit"
+                  disabled={!message.trim() || isLoading}
+                  size="sm"
+                  className="h-9 w-9 p-0 bg-primary hover:bg-primary/90"
+                >
+                  <Send className="h-4 w-4" />
+                </Button>
               </form>
             </div>
           </motion.div>

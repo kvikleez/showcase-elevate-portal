@@ -148,7 +148,7 @@ const EnhancedChatbot: React.FC = () => {
             className={cn(
               "fixed z-40 rounded-2xl overflow-hidden shadow-xl bg-background/95 backdrop-blur-lg border border-border/50",
               isMobile 
-                ? "bottom-20 left-4 right-4 top-4 h-auto max-h-[calc(100vh-6rem)]" 
+                ? "bottom-20 left-4 right-4 top-4 h-auto max-h-[calc(100vh-8rem)]" 
                 : "bottom-20 right-8 w-96 h-[600px]"
             )}
           >
@@ -173,7 +173,7 @@ const EnhancedChatbot: React.FC = () => {
             {/* Messages */}
             <div className={cn(
               "flex-1 overflow-y-auto p-4 space-y-4",
-              isMobile ? "h-[calc(100vh-240px)]" : "h-[calc(600px-140px)]"
+              isMobile ? "h-[calc(100vh-280px)]" : "h-[calc(600px-140px)]"
             )}>
               {conversation.map((msg) => (
                 <motion.div

@@ -120,6 +120,14 @@ class AIReasoningEngine {
   analyzeIntent(message: string): string {
     const msg = message.toLowerCase();
     
+    // Out-of-scope questions that should be handled naturally
+    if (msg.includes('time') || msg.includes('weather') || msg.includes('age') || 
+        msg.includes('birthday') || msg.includes('location') || msg.includes('where') ||
+        msg.includes('when') || msg.includes('how old') || msg.includes('married') ||
+        msg.includes('family') || msg.includes('personal') || msg.includes('date')) {
+      return 'out-of-scope';
+    }
+    
     // Project-related keywords
     if (msg.includes('project') || msg.includes('work') || msg.includes('build') || msg.includes('develop')) {
       return 'projects';
@@ -193,6 +201,12 @@ class AIReasoningEngine {
         response = this.generateCodeResponse();
         suggestions = ['Show GitHub repositories', 'What languages do you use?', 'Any open source contributions?'];
         type = 'code';
+        break;
+        
+      case 'out-of-scope':
+        response = this.generateOutOfScopeResponse(specificQuery || '');
+        suggestions = ['Tell me about Suchandra\'s projects', 'What are his skills?', 'How to contact him?'];
+        type = 'text';
         break;
         
       default:
@@ -292,6 +306,17 @@ class AIReasoningEngine {
       `Check out the GitHub profile for detailed code examples and project repositories!`;
   }
 
+  private generateOutOfScopeResponse(query: string): string {
+    const responses = [
+      "I'm Suchandra's portfolio assistant, so I focus on his professional work and achievements. What would you like to know about his projects or skills?",
+      "That's not something I can help with, but I'd love to tell you about Suchandra's amazing tech projects! What interests you?",
+      "I'm here to showcase Suchandra's professional portfolio. How about we talk about his development skills or recent projects?",
+      "I only know about Suchandra's professional work and technical expertise. What aspect of his career would you like to explore?"
+    ];
+    
+    return responses[Math.floor(Math.random() * responses.length)];
+  }
+
   private generateGeneralResponse(query: string): string {
     // Analyze query for specific topics
     if (query.toLowerCase().includes('achievement')) {
@@ -312,7 +337,7 @@ class AIReasoningEngine {
     }
     
     // Default comprehensive response
-    return `I'm Suchandra's AI assistant, designed to help you explore her impressive portfolio! 🚀\n\n` +
+    return `Hey! I'm here to help you learn about Suchandra's tech journey. 🚀\n\n` +
       `**Quick Overview:**\n` +
       `• ${KNOWLEDGE_BASE.personal.summary}\n` +
       `• Currently: ${KNOWLEDGE_BASE.personal.education}\n` +

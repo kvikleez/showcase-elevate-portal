@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MessageCircle, X, Send, Mic, MicOff, Volume2, VolumeX, Sparkles, User, Bot } from 'lucide-react';
+import { MessageCircle, X, Send, Mic, MicOff, Volume2, VolumeX } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -11,7 +11,6 @@ interface Message {
   sender: 'user' | 'bot';
   text: string;
   timestamp: Date;
-  suggestions?: string[];
 }
 
 // Extend Window interface for speech recognition
@@ -31,14 +30,8 @@ const EnhancedChatbot: React.FC = () => {
     { 
       id: '1', 
       sender: 'bot', 
-      text: "Hello! I'm Suchandra's AI assistant. I can help you explore projects, skills, experience, and more. What would you like to know?",
-      timestamp: new Date(),
-      suggestions: [
-        "Show me recent projects",
-        "What are the key skills?",
-        "Tell me about work experience",
-        "Any certifications?"
-      ]
+      text: "Hello! I'm Suchandra's AI assistant with real-time portfolio updates. How can I help you today?",
+      timestamp: new Date()
     }
   ]);
   const [isLoading, setIsLoading] = useState(false);
@@ -188,8 +181,7 @@ const EnhancedChatbot: React.FC = () => {
         id: (Date.now() + 1).toString(),
         sender: 'bot',
         text: response.message,
-        timestamp: new Date(),
-        suggestions: response.suggestions
+        timestamp: new Date()
       };
 
       setConversation(prev => [...prev, botMessage]);
@@ -199,24 +191,12 @@ const EnhancedChatbot: React.FC = () => {
         id: (Date.now() + 1).toString(),
         sender: 'bot',
         text: "I apologize, but I encountered an error. Please try again.",
-        timestamp: new Date(),
-        suggestions: ["Try again", "Ask something else", "Contact directly"]
+        timestamp: new Date()
       };
       setConversation(prev => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const handleSuggestionClick = (suggestion: string) => {
-    setMessage(suggestion);
-    // Trigger form submission after setting the message
-    setTimeout(() => {
-      const form = textareaRef.current?.closest('form');
-      if (form) {
-        form.requestSubmit();
-      }
-    }, 100);
   };
 
   return (
@@ -225,17 +205,17 @@ const EnhancedChatbot: React.FC = () => {
       <motion.div
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
-        className="fixed bottom-6 right-6 z-50"
+        className="fixed bottom-8 right-8 z-50"
       >
         <Button
           onClick={toggleChat}
-          className="h-14 w-14 rounded-full shadow-xl bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 transition-all duration-300 border border-primary/20"
+          className="h-16 w-16 rounded-full shadow-lg bg-primary hover:bg-primary/90 transition-colors"
         >
           <motion.div
             animate={{ rotate: isOpen ? 180 : 0 }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
+            transition={{ duration: 0.2 }}
           >
-            {isOpen ? <X className="h-5 w-5" /> : <Sparkles className="h-5 w-5" />}
+            {isOpen ? <X className="h-6 w-6" /> : <MessageCircle className="h-6 w-6" />}
           </motion.div>
         </Button>
       </motion.div>
@@ -244,128 +224,79 @@ const EnhancedChatbot: React.FC = () => {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: 24, scale: 0.94 }}
+            initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 24, scale: 0.94 }}
-            transition={{ duration: 0.3, ease: "easeOut" }}
-            className="fixed bottom-24 right-4 w-[380px] max-w-[calc(100vw-2rem)] h-[580px] max-h-[calc(100vh-8rem)] z-40 rounded-3xl overflow-hidden shadow-2xl bg-background/95 backdrop-blur-lg border border-border/50"
+            exit={{ opacity: 0, y: 20, scale: 0.95 }}
+            transition={{ duration: 0.2 }}
+            className="fixed bottom-28 right-8 w-96 h-[600px] z-40 rounded-2xl overflow-hidden shadow-2xl bg-background border border-border"
           >
             {/* Header */}
-            <div className="p-4 bg-gradient-to-r from-background/90 to-background/70 border-b border-border/30 backdrop-blur-sm">
+            <div className="p-6 bg-background border-b border-border">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="h-8 w-8 rounded-full bg-gradient-to-r from-primary to-primary/70 flex items-center justify-center">
-                    <Bot className="h-4 w-4 text-primary-foreground" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-sm">AI Assistant</h3>
-                    <p className="text-xs text-muted-foreground">Powered by Gemini</p>
-                  </div>
+                <div>
+                  <h3 className="font-medium text-lg">AI Assistant</h3>
+                  <p className="text-sm text-muted-foreground">How can I help?</p>
                 </div>
-                <Button variant="ghost" size="sm" onClick={toggleChat} className="h-7 w-7 p-0 hover:bg-muted/50">
-                  <X className="h-3.5 w-3.5" />
+                <Button variant="ghost" size="sm" onClick={toggleChat} className="h-8 w-8 p-0">
+                  <X className="h-4 w-4" />
                 </Button>
               </div>
             </div>
             
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-4 h-[calc(580px-140px)]">
-              {conversation.map((msg, index) => (
-                <div key={msg.id}>
-                  <motion.div
-                    initial={{ opacity: 0, y: 12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3, delay: index * 0.1 }}
-                    className={cn(
-                      "max-w-[85%] group",
-                      msg.sender === 'user' ? "ml-auto" : "mr-auto"
-                    )}
-                  >
-                    <div className={cn(
-                      "relative p-3 rounded-2xl",
-                      msg.sender === 'user' 
-                        ? "bg-primary text-primary-foreground rounded-tr-md" 
-                        : "bg-muted/70 rounded-tl-md"
-                    )}>
-                      <div className="flex items-start gap-2">
-                        {msg.sender === 'bot' && (
-                          <Bot className="h-4 w-4 mt-0.5 text-muted-foreground/70 flex-shrink-0" />
-                        )}
-                        <div className="flex-1">
-                          <p className="text-sm leading-relaxed whitespace-pre-wrap break-words">
-                            {msg.text}
-                          </p>
-                          <div className="flex items-center justify-between mt-2 pt-1">
-                            <p className="text-xs opacity-50">
-                              {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                            </p>
-                            {msg.sender === 'bot' && (
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => isSpeaking ? stopSpeaking() : speakText(msg.text)}
-                                className="h-5 w-5 p-0 opacity-0 group-hover:opacity-70 hover:opacity-100 transition-opacity"
-                                disabled={isLoading}
-                              >
-                                {isSpeaking ? 
-                                  <VolumeX className="h-3 w-3" /> : 
-                                  <Volume2 className="h-3 w-3" />
-                                }
-                              </Button>
-                            )}
-                          </div>
-                        </div>
-                        {msg.sender === 'user' && (
-                          <User className="h-4 w-4 mt-0.5 text-primary-foreground/70 flex-shrink-0" />
-                        )}
-                      </div>
-                    </div>
-                  </motion.div>
-                  
-                  {/* Suggestion Buttons */}
-                  {msg.sender === 'bot' && msg.suggestions && msg.suggestions.length > 0 && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.3, delay: 0.2 }}
-                      className="flex flex-wrap gap-2 mt-3 pl-6"
-                    >
-                      {msg.suggestions.map((suggestion, idx) => (
-                        <Button
-                          key={idx}
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleSuggestionClick(suggestion)}
-                          className="text-xs h-7 px-3 bg-background/50 hover:bg-muted/80 border-muted-foreground/20 hover:border-muted-foreground/40 transition-all"
-                          disabled={isLoading}
-                        >
-                          {suggestion}
-                        </Button>
-                      ))}
-                    </motion.div>
+            <div className="flex-1 overflow-y-auto p-6 space-y-6 h-[calc(600px-180px)]">
+              {conversation.map((msg) => (
+                <motion.div
+                  key={msg.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className={cn(
+                    "max-w-[80%] p-4 rounded-2xl",
+                    msg.sender === 'user' 
+                      ? "bg-primary text-primary-foreground ml-auto" 
+                      : "bg-muted mr-auto"
                   )}
-                </div>
+                >
+                  <p className="text-sm leading-relaxed whitespace-pre-wrap">
+                    {msg.text}
+                  </p>
+                  <div className="flex items-center justify-between mt-2">
+                    <p className="text-xs opacity-60">
+                      {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </p>
+                    {msg.sender === 'bot' && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => isSpeaking ? stopSpeaking() : speakText(msg.text)}
+                        className="h-6 w-6 p-0 opacity-60 hover:opacity-100"
+                        disabled={isLoading}
+                      >
+                        {isSpeaking ? 
+                          <VolumeX className="h-3 w-3" /> : 
+                          <Volume2 className="h-3 w-3" />
+                        }
+                      </Button>
+                    )}
+                  </div>
+                </motion.div>
               ))}
               
               {/* Typing Indicator */}
               {isLoading && (
                 <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="max-w-[85%] mr-auto"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="max-w-[80%] p-4 rounded-2xl bg-muted mr-auto"
                 >
-                  <div className="bg-muted/70 p-3 rounded-2xl rounded-tl-md">
-                    <div className="flex items-center gap-3">
-                      <Bot className="h-4 w-4 text-muted-foreground/70 flex-shrink-0" />
-                      <div className="flex items-center gap-2">
-                        <div className="flex gap-1">
-                          <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground/60 animate-bounce"></div>
-                          <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground/60 animate-bounce delay-100"></div>
-                          <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground/60 animate-bounce delay-200"></div>
-                        </div>
-                        <span className="text-xs text-muted-foreground">Thinking...</span>
-                      </div>
+                  <div className="flex items-center gap-2">
+                    <div className="flex gap-1">
+                      <div className="w-2 h-2 rounded-full bg-muted-foreground animate-bounce"></div>
+                      <div className="w-2 h-2 rounded-full bg-muted-foreground animate-bounce delay-100"></div>
+                      <div className="w-2 h-2 rounded-full bg-muted-foreground animate-bounce delay-200"></div>
                     </div>
+                    <span className="text-xs text-muted-foreground">Thinking...</span>
                   </div>
                 </motion.div>
               )}
@@ -374,16 +305,16 @@ const EnhancedChatbot: React.FC = () => {
             </div>
             
             {/* Input Area */}
-            <div className="p-4 border-t border-border/30 bg-background/90 backdrop-blur-sm">
-              <form onSubmit={handleSubmit} className="flex gap-2 items-end">
-                <div className="flex-1 relative">
+            <div className="p-6 border-t border-border bg-background">
+              <form onSubmit={handleSubmit} className="flex gap-3 items-end">
+                <div className="flex-1">
                   <Textarea
                     ref={textareaRef}
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
-                    placeholder="Ask about projects, skills, experience..."
+                    placeholder="Type your message..."
                     disabled={isLoading}
-                    className="min-h-0 resize-none border border-border/50 rounded-xl shadow-none focus-visible:ring-1 focus-visible:ring-primary/30 p-3 pr-20 bg-background/80 text-sm placeholder:text-muted-foreground/60"
+                    className="min-h-0 resize-none border-0 shadow-none focus-visible:ring-0 p-0 bg-transparent"
                     rows={1}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' && !e.shiftKey) {
@@ -392,28 +323,26 @@ const EnhancedChatbot: React.FC = () => {
                       }
                     }}
                   />
-                  <div className="absolute right-2 bottom-2 flex gap-1">
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      onClick={isListening ? stopListening : startListening}
-                      className={cn(
-                        "h-6 w-6 p-0 hover:bg-muted/50 transition-colors",
-                        isListening && "text-primary bg-primary/10"
-                      )}
-                    >
-                      {isListening ? <MicOff className="h-3.5 w-3.5" /> : <Mic className="h-3.5 w-3.5" />}
-                    </Button>
-                    
-                    <Button
-                      type="submit"
-                      disabled={!message.trim() || isLoading}
-                      className="h-6 w-6 p-0 bg-primary hover:bg-primary/90 disabled:bg-muted disabled:text-muted-foreground"
-                    >
-                      <Send className="h-3.5 w-3.5" />
-                    </Button>
-                  </div>
+                </div>
+                
+                <div className="flex gap-2">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={isListening ? stopListening : startListening}
+                    className={cn("h-8 w-8 p-0", isListening && "text-primary")}
+                  >
+                    {isListening ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
+                  </Button>
+                  
+                  <Button
+                    type="submit"
+                    disabled={!message.trim() || isLoading}
+                    className="h-8 w-8 p-0"
+                  >
+                    <Send className="h-4 w-4" />
+                  </Button>
                 </div>
               </form>
             </div>

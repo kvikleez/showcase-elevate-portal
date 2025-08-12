@@ -296,97 +296,25 @@ class EnhancedAIEngine {
   }
 }
 
-async function callAIAPI(messages: ChatMessage[]): Promise<string> {
-  try {
-    console.log('🔄 Attempting AI API call with messages:', messages.length);
-    
-    const response = await fetch('https://pnhlgkoxsgxhiyesbtqh.supabase.co/functions/v1/ai-chat', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ messages }),
-    });
-
-    console.log('📡 AI API response status:', response.status);
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('❌ AI API error response:', errorText);
-      throw new Error(`API call failed: ${response.status} - ${errorText}`);
-    }
-
-    const data = await response.json();
-    console.log('✅ AI API response data:', data);
-    
-    return data.message?.content || "I apologize, but I couldn't generate a response.";
-  } catch (error) {
-    console.error('💥 AI API call error:', error);
-    throw error;
-  }
-}
-
 // Global instance with real-time updates
 const enhancedEngine = new EnhancedAIEngine();
 
 export async function enhancedChatCompletion(messages: ChatMessage[]): Promise<ChatResponse> {
+  // Realistic response time with speech processing consideration
+  await new Promise(resolve => setTimeout(resolve, Math.random() * 800 + 300));
+  
   const lastUserMessage = messages.filter(m => m.role === 'user').pop();
   
   if (!lastUserMessage) {
     return {
-      message: "Hello! I'm Suchandra's AI assistant. I can help you learn about projects, skills, experience, and more. What would you like to know?",
+      message: "👋 Hi! I'm Suchandra's AI assistant with real-time portfolio updates. How can I help you explore his impressive tech journey?",
       type: 'suggestion',
       tokens: 25,
-      suggestions: [
-        "Show me recent projects",
-        "What are the key skills?", 
-        "Tell me about work experience",
-        "Any certifications?"
-      ],
+      suggestions: ['Show me projects', 'What are your skills?', 'Tell me about experience', 'Contact information'],
       confidence: 1.0
     };
   }
   
-  // Try AI-powered response first, fall back to local knowledge
-  try {
-    console.log('🚀 Calling AI API for user message:', lastUserMessage.content);
-    const aiResponse = await callAIAPI(messages);
-    console.log('🎯 AI Response received:', aiResponse.substring(0, 100) + '...');
-    
-    // Check if AI response is a valid response (not an error message)
-    const errorMessages = [
-      'technical difficulties',
-      'AI services are not configured',
-      'experiencing technical difficulties',
-      'Please try again',
-      'contact the administrator'
-    ];
-    
-    const isValidAIResponse = aiResponse && !errorMessages.some(errorMsg => 
-      aiResponse.toLowerCase().includes(errorMsg.toLowerCase())
-    );
-    
-    if (isValidAIResponse) {
-      console.log('✅ Using AI response');
-      return {
-        message: aiResponse,
-        type: 'text',
-        tokens: aiResponse.length,
-        confidence: 0.9,
-        suggestions: [
-          "Tell me more about this",
-          "What else can you show me?",
-          "Any recent updates?"
-        ]
-      };
-    } else {
-      console.log('⚠️ AI response not usable, falling back to local knowledge');
-    }
-  } catch (error) {
-    console.error('💥 AI response failed, using local knowledge:', error);
-  }
-  
-  // Fallback to local knowledge
   const intent = enhancedEngine.analyzeIntent(lastUserMessage.content);
   return enhancedEngine.generateResponse(intent, lastUserMessage.content);
 }

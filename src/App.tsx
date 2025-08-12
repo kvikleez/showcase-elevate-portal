@@ -15,7 +15,6 @@ import Certificates from "./pages/Certificates";
 import CertificateDetail from "./pages/CertificateDetail";
 import NotFound from "./pages/NotFound";
 import PageTransition from "./components/ui/PageTransition";
-import EnhancedChatbot from "./components/ui/EnhancedChatbot";
 
 // Create and configure QueryClient
 const queryClient = new QueryClient({
@@ -58,7 +57,6 @@ const App = () => (
         <BrowserRouter>
           <AnimatedRoutes />
         </BrowserRouter>
-        <EnhancedChatbot />
       </div>
     </TooltipProvider>
   </QueryClientProvider>

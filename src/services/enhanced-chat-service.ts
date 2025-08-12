@@ -353,7 +353,20 @@ export async function enhancedChatCompletion(messages: ChatMessage[]): Promise<C
     const aiResponse = await callAIAPI(messages);
     console.log('🎯 AI Response received:', aiResponse.substring(0, 100) + '...');
     
-    if (aiResponse && !aiResponse.includes('technical difficulties') && !aiResponse.includes('AI services are not configured')) {
+    // Check if AI response is a valid response (not an error message)
+    const errorMessages = [
+      'technical difficulties',
+      'AI services are not configured',
+      'experiencing technical difficulties',
+      'Please try again',
+      'contact the administrator'
+    ];
+    
+    const isValidAIResponse = aiResponse && !errorMessages.some(errorMsg => 
+      aiResponse.toLowerCase().includes(errorMsg.toLowerCase())
+    );
+    
+    if (isValidAIResponse) {
       console.log('✅ Using AI response');
       return {
         message: aiResponse,
@@ -367,7 +380,7 @@ export async function enhancedChatCompletion(messages: ChatMessage[]): Promise<C
         ]
       };
     } else {
-      console.log('⚠️ AI response not usable, falling back to local');
+      console.log('⚠️ AI response not usable, falling back to local knowledge');
     }
   } catch (error) {
     console.error('💥 AI response failed, using local knowledge:', error);

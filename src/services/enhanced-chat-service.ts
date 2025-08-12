@@ -1,5 +1,4 @@
-// Enhanced chat service with real-time portfolio data integration and advanced AI capabilities
-import portfolioDataService from './portfolio-data-service';
+// Enhanced chat service with advanced AI capabilities and portfolio-specific knowledge
 
 interface ChatMessage {
   role: 'user' | 'assistant' | 'system';
@@ -14,136 +13,190 @@ interface ChatResponse {
   confidence: number;
 }
 
-// Enhanced AI reasoning engine with real-time data integration
-class EnhancedAIEngine {
+// Comprehensive knowledge base about Suchandra
+const KNOWLEDGE_BASE = {
+  personal: {
+    name: "ETTI S N V V SUCHANDRA",
+    email: "snvvs369@gmail.com",
+    phone: "+91 7989635988",
+    github: "github/SnvvSuchandraEtti",
+    linkedin: "linkedin/suchandra-etti",
+    twitter: "twitter.com/snvvs369",
+    education: "Final-year Computer Science and Engineering student at Aditya Engineering College",
+    summary: "Proven expertise in full-stack software development and mobile application engineering with experience delivering multiple client projects in agile environments"
+  },
+
+  skills: {
+    technical: ["Python", "Java", "C", "CPP", "R", "HTML", "CSS", "JavaScript", "PL/SQL"],
+    frameworks: ["Google Flutter", "ReactJS", "Nodejs", "Express.js", "Bootstrap"],
+    databases: ["MongoDB", "Firebase", "MySQL", "Amazon Web Services(AWS)"],
+    fundamentals: ["Object Oriented Programming", "Computer Networks", "DBMS", "Operating System"],
+    tools: ["VS Code", "Android Studio", "GitHub", "VMware", "Blender", "Figma", "Audacity", "Davinci Resolve", "Gimp"],
+    development: ["Agile", "Scrum", "Test-Driven Development", "Version Control", "API Integration"]
+  },
+
+  projects: {
+    "TORI": {
+      date: "March 2025",
+      description: "Architected EdTech platform with RESTful APIs, increasing user engagement by 45% and supporting 10,000+ concurrent global users",
+      achievements: ["95% code coverage", "30% reduction in production defects", "Automated testing frameworks"]
+    },
+    "ACLUB": {
+      date: "January 2025",
+      description: "Developed comprehensive mobile application with Firebase backend for college club management",
+      achievements: ["65% efficiency improvement", "40% increase in event participation", "98% positive feedback"]
+    },
+    "S-TRACK": {
+      date: "November 2024",
+      description: "Engineered an app with role-based authentication, reducing administrative overhead by 70% while serving 18,000+ users"
+    },
+    "AIBG-RM": {
+      date: "October 2024",
+      description: "Built an web application with 95% accuracy in image processing, handling 1,000+ daily requests with 60% faster performance"
+    },
+    "VIGGIEMART": {
+      date: "September 2024",
+      description: "Engineered a farmer-to-buyer marketplace app during SIH, enabling real-time bidding for fair pricing"
+    }
+  },
+
+  experience: {
+    "Flutter Internship": {
+      company: "Technical Hub",
+      duration: "June - July 2024",
+      mentors: ["Venkata Krishna sir", "Vasanth sir"],
+      description: "Engineered enterprise-class Java Application and Flutter E-commerce platform with Firebase authentication, delivering 40% performance optimization"
+    },
+    "Java Internship": {
+      company: "Technical Hub", 
+      duration: "April 2024",
+      mentors: ["Pavan sir"],
+      description: "Architected a Java-based enterprise with multi-threaded data processing that achieved 70% efficiency improvement"
+    }
+  },
+
+  achievements: [
+    "AWS Certified Cloud Practitioner",
+    "Postman API Fundamentals Student Expert",
+    "Solved 500+ Questions in Leetcode, GFG, CodeChef and HackerRank",
+    "Globally ranked in top 5% of competitive contests, placing among top 5000",
+    "College representative at multiple institutions for hackathons and technical events"
+  ]
+};
+
+// Advanced response patterns with context awareness
+const RESPONSE_PATTERNS = {
+  greeting: [
+    "Hello! I'm excited to help you learn about Suchandra's impressive portfolio. What would you like to explore?",
+    "Hi there! Suchandra has quite a remarkable background in tech. What specific area interests you?",
+    "Welcome! I'm here to showcase Suchandra's journey from student to accomplished developer. How can I help?"
+  ],
+
+  projects: [
+    "Suchandra has worked on some fascinating projects! Here are the highlights:",
+    "Let me walk you through Suchandra's impressive project portfolio:",
+    "These projects really showcase Suchandra's versatility and technical depth:"
+  ],
+
+  skills: [
+    "Suchandra's technical expertise spans multiple domains:",
+    "Here's a comprehensive overview of Suchandra's technical capabilities:",
+    "Suchandra has built a robust skill set across the full technology stack:"
+  ],
+
+  contact: [
+    "You can reach out to Suchandra through several channels:",
+    "Here's how to connect with Suchandra for opportunities:",
+    "Suchandra is actively looking for new opportunities. Contact details:"
+  ]
+};
+
+// AI reasoning engine for contextual responses
+class AIReasoningEngine {
   private context: string[] = [];
   private userIntent: string = '';
   private confidence: number = 0;
-  private portfolioData: any = null;
-
-  constructor() {
-    this.initializeData();
-    this.subscribeToUpdates();
-  }
-
-  private initializeData(): void {
-    this.portfolioData = portfolioDataService.getData();
-  }
-
-  private subscribeToUpdates(): void {
-    portfolioDataService.subscribe((data) => {
-      this.portfolioData = data;
-      console.log('🤖 Chatbot updated with latest portfolio data');
-    });
-  }
 
   analyzeIntent(message: string): string {
     const msg = message.toLowerCase();
     
-    // Advanced intent analysis with better keyword matching
-    if (msg.match(/\b(project|work|build|develop|create|tori|aclub|track|marketplace|app)\b/)) {
+    // Project-related keywords
+    if (msg.includes('project') || msg.includes('work') || msg.includes('build') || msg.includes('develop')) {
       return 'projects';
     }
     
-    if (msg.match(/\b(skill|technology|language|framework|programming|tech|stack|flutter|react|java|python)\b/)) {
+    // Skill-related keywords
+    if (msg.includes('skill') || msg.includes('technology') || msg.includes('language') || msg.includes('framework')) {
       return 'skills';
     }
     
-    if (msg.match(/\b(contact|hire|reach|email|phone|linkedin|github|connect|opportunity)\b/)) {
+    // Contact-related keywords
+    if (msg.includes('contact') || msg.includes('hire') || msg.includes('reach') || msg.includes('email')) {
       return 'contact';
     }
     
-    if (msg.match(/\b(experience|internship|work|job|career|employment|technical hub)\b/)) {
+    // Experience-related keywords
+    if (msg.includes('experience') || msg.includes('internship') || msg.includes('work') || msg.includes('job')) {
       return 'experience';
     }
     
-    if (msg.match(/\b(certificate|certification|achievement|award|aws|achievement|leetcode)\b/)) {
-      return 'achievements';
-    }
-    
-    if (msg.match(/\b(education|college|university|degree|student|academic)\b/)) {
-      return 'education';
-    }
-
-    if (msg.match(/\b(code|github|repository|example|programming|source)\b/)) {
+    // Code-related keywords
+    if (msg.includes('code') || msg.includes('github') || msg.includes('repository') || msg.includes('example')) {
       return 'code';
     }
     
-    if (msg.match(/\b(hello|hi|hey|start|help|about|who)\b/)) {
+    // Greeting keywords
+    if (msg.includes('hello') || msg.includes('hi') || msg.includes('hey') || msg.includes('start')) {
       return 'greeting';
     }
     
     return 'general';
   }
 
-  generateResponse(intent: string, userMessage?: string): ChatResponse {
-    if (!this.portfolioData) {
-      return {
-        message: "🔄 Loading Suchandra's latest portfolio data... Please try again in a moment.",
-        type: 'info',
-        tokens: 15,
-        suggestions: ['Tell me about projects', 'Show skills', 'Contact info'],
-        confidence: 0.5
-      };
-    }
-
-    const { personalInfo, projects, skills, experiences, certificates } = this.portfolioData;
+  generateResponse(intent: string, specificQuery?: string): ChatResponse {
     let response = '';
     let suggestions: string[] = [];
     let type: 'text' | 'code' | 'suggestion' | 'info' = 'text';
-    this.confidence = 0.95;
     
     switch (intent) {
       case 'greeting':
-        response = `👋 Hello! I'm Suchandra's AI assistant with real-time portfolio updates.\n\n**${personalInfo.name}** - ${personalInfo.title}\n\n${personalInfo.summary}\n\n🚀 **What I can help you discover:**\n• 📱 **${projects.length} Innovative Projects** with measurable impact\n• 💻 **${skills.length} Technical Skill Categories** across the full stack\n• 💼 **${experiences.length} Professional Experiences** and internships\n• 🏆 **${certificates.length} Certifications** and achievements\n• 📞 **Contact Information** for opportunities\n\nWhat would you like to explore first?`;
+        response = this.getRandomResponse(RESPONSE_PATTERNS.greeting);
         suggestions = ['Show me projects', 'What are your skills?', 'Tell me about experience', 'How to contact?'];
         type = 'suggestion';
         break;
         
       case 'projects':
-        response = this.generateProjectsResponse(userMessage, projects);
-        suggestions = ['Tell me about TORI', 'Show ACLUB details', 'What about S-TRACK?', 'View all projects'];
+        response = this.generateProjectsResponse(specificQuery);
+        suggestions = ['Tell me about TORI project', 'Show ACLUB details', 'What about S-TRACK?'];
         type = 'info';
         break;
         
       case 'skills':
-        response = this.generateSkillsResponse(skills);
-        suggestions = ['Show programming languages', 'What frameworks?', 'Database experience', 'Development tools'];
+        response = this.generateSkillsResponse();
+        suggestions = ['Show programming languages', 'What frameworks do you know?', 'Tell me about databases'];
         type = 'info';
         break;
         
       case 'contact':
-        response = this.generateContactResponse(personalInfo);
-        suggestions = ['View GitHub profile', 'Connect on LinkedIn', 'Send email', 'Check Twitter'];
+        response = this.generateContactResponse();
+        suggestions = ['Open GitHub profile', 'View LinkedIn', 'Send email'];
         type = 'info';
         break;
         
       case 'experience':
-        response = this.generateExperienceResponse(experiences);
-        suggestions = ['Internship details', 'Technical achievements', 'Show certifications', 'Career timeline'];
-        type = 'info';
-        break;
-
-      case 'achievements':
-        response = this.generateAchievementsResponse(certificates);
-        suggestions = ['AWS certification', 'Coding achievements', 'Competition rankings', 'All certifications'];
-        type = 'info';
-        break;
-
-      case 'education':
-        response = this.generateEducationResponse(personalInfo);
-        suggestions = ['Academic projects', 'College activities', 'Technical skills', 'Current status'];
+        response = this.generateExperienceResponse();
+        suggestions = ['Tell me about internships', 'What did you achieve?', 'Show certifications'];
         type = 'info';
         break;
         
       case 'code':
-        response = this.generateCodeResponse(personalInfo, projects);
-        suggestions = ['GitHub repositories', 'Programming languages', 'Code examples', 'Open source work'];
+        response = this.generateCodeResponse();
+        suggestions = ['Show GitHub repositories', 'What languages do you use?', 'Any open source contributions?'];
         type = 'code';
         break;
         
       default:
-        response = this.generateGeneralResponse(userMessage || '', personalInfo);
+        response = this.generateGeneralResponse(specificQuery || '');
         suggestions = ['Tell me about projects', 'Show technical skills', 'Contact information', 'Work experience'];
         type = 'suggestion';
     }
@@ -151,170 +204,145 @@ class EnhancedAIEngine {
     return {
       message: response,
       type,
-      tokens: Math.floor(response.length / 4),
+      tokens: Math.floor(response.length / 4), // Rough token estimation
       suggestions,
       confidence: this.confidence
     };
   }
 
-  private generateProjectsResponse(query: string = '', projects: any[]): string {
+  private getRandomResponse(patterns: string[]): string {
+    return patterns[Math.floor(Math.random() * patterns.length)];
+  }
+
+  private generateProjectsResponse(query?: string): string {
+    const projects = KNOWLEDGE_BASE.projects;
+    
     if (query && query.toLowerCase().includes('tori')) {
-      const tori = projects.find(p => p.title.toLowerCase().includes('tori'));
-      if (tori) {
-        return `🚀 **${tori.title}** - ${tori.status}\n\n📋 **Description:** ${tori.description}\n\n🛠️ **Technologies:** ${tori.technologies.join(', ')}\n\n✨ **Key Features:**\n${tori.features.map((f: string) => `• ${f}`).join('\n')}\n\n${tori.github ? `🔗 **GitHub:** ${tori.github}` : ''}${tori.demo ? `\n🌐 **Live Demo:** ${tori.demo}` : ''}\n\nThis project demonstrates Suchandra's ability to build scalable educational platforms!`;
-      }
+      const tori = projects.TORI;
+      return `🚀 **TORI (Edu-tech App)** - ${tori.date}\n\n${tori.description}\n\n**Key Achievements:**\n${tori.achievements.map(a => `• ${a}`).join('\n')}\n\nThis project demonstrates Suchandra's ability to build scalable educational platforms that serve thousands of users globally.`;
     }
     
     if (query && query.toLowerCase().includes('aclub')) {
-      const aclub = projects.find(p => p.title.toLowerCase().includes('aclub'));
-      if (aclub) {
-        return `📱 **${aclub.title}** - ${aclub.status}\n\n📋 **Description:** ${aclub.description}\n\n🛠️ **Technologies:** ${aclub.technologies.join(', ')}\n\n✨ **Key Features:**\n${aclub.features.map((f: string) => `• ${f}`).join('\n')}\n\n${aclub.github ? `🔗 **GitHub:** ${aclub.github}` : ''}${aclub.demo ? `\n🌐 **Live Demo:** ${aclub.demo}` : ''}\n\nShowcases expertise in mobile development and user experience design!`;
-      }
+      const aclub = projects.ACLUB;
+      return `📱 **ACLUB (College Clubs Management App)** - ${aclub.date}\n\n${aclub.description}\n\n**Key Achievements:**\n${aclub.achievements.map(a => `• ${a}`).join('\n')}\n\nThis showcases Suchandra's expertise in mobile development and user experience design.`;
     }
     
-    // General projects overview with real-time data
-    return `🚀 **Suchandra's Project Portfolio** (Updated: ${this.portfolioData.lastUpdated.toLocaleDateString()})\n\n` +
-      projects.map((project: any) => 
-        `🔹 **${project.title}** (${project.status})\n   📋 ${project.description}\n   🛠️ ${project.technologies.slice(0, 3).join(', ')}\n`
+    // General projects overview
+    return `${this.getRandomResponse(RESPONSE_PATTERNS.projects)}\n\n` +
+      Object.entries(projects).map(([name, details]) => 
+        `🔹 **${name}** (${details.date})\n   ${details.description}\n`
       ).join('\n') +
-      `\n💡 **Portfolio Highlights:**\n• ${projects.length} innovative projects with measurable impact\n• Full-stack development across web and mobile\n• AI/ML integration and cloud deployment\n• Real-world problem solving with user-centric design\n\n📊 All projects demonstrate significant performance improvements and user engagement!`;
+      `\n💡 These projects demonstrate Suchandra's versatility across web development, mobile apps, AI, and marketplace solutions. Each project solved real-world problems with measurable impact!`;
   }
 
-  private generateSkillsResponse(skills: any[]): string {
-    return `💻 **Suchandra's Technical Expertise** (Live Updated)\n\n` +
-      skills.map((category: any) => {
-        const topSkills = category.items.slice(0, 4).map((item: any) => 
-          `${item.name} (${item.level}/5)`
-        ).join(', ');
-        return `**${category.category}:**\n${topSkills}${category.items.length > 4 ? ` +${category.items.length - 4} more` : ''}\n`;
-      }).join('\n') +
-      `\n🎯 **Specializations:**\n• Full-stack development with modern frameworks\n• Mobile app development (Flutter/React Native)\n• Cloud services and deployment (AWS certified)\n• AI/ML implementation and optimization\n• Database design and management\n\n📈 Consistently delivers 20% performance improvements while reducing development cycles!`;
+  private generateSkillsResponse(): string {
+    const skills = KNOWLEDGE_BASE.skills;
+    
+    return `${this.getRandomResponse(RESPONSE_PATTERNS.skills)}\n\n` +
+      `**💻 Programming Languages:**\n${skills.technical.join(', ')}\n\n` +
+      `**🛠️ Frameworks & Libraries:**\n${skills.frameworks.join(', ')}\n\n` +
+      `**🗄️ Databases & Cloud:**\n${skills.databases.join(', ')}\n\n` +
+      `**🔧 Developer Tools:**\n${skills.tools.slice(0, 5).join(', ')} and more\n\n` +
+      `**📚 CS Fundamentals:**\n${skills.fundamentals.join(', ')}\n\n` +
+      `Suchandra has consistently improved application performance by 20% while reducing development cycles through efficient code optimization.`;
   }
 
-  private generateContactResponse(personalInfo: any): string {
-    return `📞 **Connect with Suchandra** (Ready for New Opportunities)\n\n` +
-      `📧 **Email:** ${personalInfo.email}\n` +
-      `📱 **Phone:** ${personalInfo.phone}\n` +
-      `💼 **LinkedIn:** ${personalInfo.linkedin}\n` +
-      `🐙 **GitHub:** ${personalInfo.github}\n` +
-      `🐦 **Twitter:** ${personalInfo.twitter}\n` +
-      `📍 **Location:** ${personalInfo.location}\n\n` +
-      `🎯 **Current Status:** Final-year student actively seeking:\n` +
-      `• Full-time software development positions\n` +
-      `• Internship opportunities in tech companies\n` +
-      `• Freelance and consulting projects\n` +
-      `• Open source collaboration\n\n` +
-      `💪 **Ready to deliver:** User-centric solutions with measurable business impact!`;
+  private generateContactResponse(): string {
+    const personal = KNOWLEDGE_BASE.personal;
+    
+    return `${this.getRandomResponse(RESPONSE_PATTERNS.contact)}\n\n` +
+      `📧 **Email:** ${personal.email}\n` +
+      `📱 **Phone:** ${personal.phone}\n` +
+      `💼 **LinkedIn:** ${personal.linkedin}\n` +
+      `🐙 **GitHub:** ${personal.github}\n` +
+      `🐦 **Twitter:** ${personal.twitter}\n\n` +
+      `🎯 Suchandra is currently open to internship and full-time opportunities in software development, particularly in full-stack and mobile development roles.\n\n` +
+      `💼 Ready to deliver measurable business impact through user-centric design and data-driven optimization strategies.`;
   }
 
-  private generateExperienceResponse(experiences: any[]): string {
-    return `💼 **Suchandra's Professional Journey**\n\n` +
-      experiences.map((exp: any) => 
-        `🏢 **${exp.title}** at ${exp.company}\n` +
-        `📅 ${exp.duration} | 📍 ${exp.location}\n` +
-        `📋 ${exp.description}\n` +
-        `🎯 **Key Achievements:** ${exp.achievements.slice(0, 2).join(', ')}\n` +
-        `🛠️ **Technologies:** ${exp.technologies.join(', ')}\n`
+  private generateExperienceResponse(): string {
+    const experience = KNOWLEDGE_BASE.experience;
+    
+    return `Here's Suchandra's professional journey:\n\n` +
+      Object.entries(experience).map(([role, details]) => 
+        `🏢 **${role}** at ${details.company}\n` +
+        `📅 ${details.duration}\n` +
+        `👨‍💼 Mentors: ${details.mentors?.join(', ')}\n` +
+        `📋 ${details.description}\n`
       ).join('\n') +
-      `\n🚀 **Professional Highlights:**\n• Agile development with 95% sprint completion rates\n• Cross-functional team collaboration\n• Performance optimization and code quality focus\n• Client satisfaction and project delivery excellence\n\n💡 Proven track record of exceeding expectations in fast-paced environments!`;
+      `\n🏆 **Key Achievements:**\n` +
+      KNOWLEDGE_BASE.achievements.slice(0, 3).map(a => `• ${a}`).join('\n') +
+      `\n\n💪 Suchandra excels in cross-functional team collaboration and consistently meets critical deadlines while delivering high-quality solutions.`;
   }
 
-  private generateAchievementsResponse(certificates: any[]): string {
-    return `🏆 **Suchandra's Achievements & Certifications**\n\n` +
-      `**🎖️ Professional Certifications:**\n` +
-      certificates.map((cert: any) => `• **${cert.title}** - ${cert.issuer} (${cert.date})`).join('\n') +
-      `\n\n**💻 Coding Achievements:**\n` +
-      `• 500+ problems solved (LeetCode, GeeksforGeeks, CodeChef, HackerRank)\n` +
+  private generateCodeResponse(): string {
+    return `🔍 **Suchandra's Code & Development:**\n\n` +
+      `**🐙 GitHub:** ${KNOWLEDGE_BASE.personal.github}\n` +
+      `**💻 Primary Languages:** Python, Java, JavaScript, Flutter/Dart\n` +
+      `**🏗️ Architecture Experience:** RESTful APIs, Microservices, Real-time Systems\n\n` +
+      `**📊 Coding Achievements:**\n` +
+      `• 500+ problems solved across LeetCode, GeeksforGeeks, CodeChef, HackerRank\n` +
       `• Top 5% globally in competitive programming contests\n` +
-      `• College representative at multiple technical events\n` +
-      `• Multiple hackathon participations and wins\n\n` +
-      `**📈 Performance Metrics:**\n` +
       `• 95% code coverage in testing frameworks\n` +
-      `• 30% reduction in production defects\n` +
-      `• 70% improvement in administrative efficiency\n` +
-      `• 40% increase in user engagement across projects\n\n` +
-      `🎯 Continuous learner with a passion for technical excellence!`;
-  }
-
-  private generateEducationResponse(personalInfo: any): string {
-    return `🎓 **Educational Background**\n\n` +
-      `**Current:** Final-year Computer Science & Engineering\n` +
-      `🏫 **Institution:** Aditya Engineering College (2022-Present)\n\n` +
-      `**📚 Academic Focus:**\n` +
-      `• Software Engineering & System Design\n` +
-      `• Mobile Application Development\n` +
-      `• Artificial Intelligence & Machine Learning\n` +
-      `• Cloud Computing & DevOps\n` +
-      `• Database Management & Optimization\n\n` +
-      `**🎯 Extracurricular Excellence:**\n` +
-      `• Technical workshops and leadership roles\n` +
-      `• College representative at major institutions\n` +
-      `• Event management and team coordination\n` +
-      `• Community engagement and mentoring\n\n` +
-      `**🚀 Current Status:** Ready to transition from academic excellence to professional impact!`;
-  }
-
-  private generateCodeResponse(personalInfo: any, projects: any[]): string {
-    return `💻 **Code & Development Portfolio**\n\n` +
-      `**🐙 GitHub Profile:** ${personalInfo.github}\n` +
-      `**🔧 Primary Tech Stack:** Flutter, React, Java, Python, Node.js\n` +
-      `**🏗️ Architecture:** RESTful APIs, Microservices, Real-time Systems\n\n` +
-      `**📊 Coding Metrics:**\n` +
-      `• ${projects.length} production-ready applications\n` +
-      `• 500+ algorithm problems solved\n` +
-      `• 95% test coverage maintained\n` +
-      `• CI/CD pipelines implemented\n\n` +
+      `• Implemented CI/CD practices and version control\n\n` +
       `**🚀 Recent Code Highlights:**\n` +
-      projects.slice(0, 3).map((p: any) => `• **${p.title}**: ${p.description.substring(0, 80)}...`).join('\n') +
-      `\n\n**🔍 Code Quality Focus:**\n` +
-      `• Clean architecture principles\n` +
-      `• Test-driven development\n` +
-      `• Performance optimization\n` +
-      `• Security best practices\n\n` +
-      `💡 Check the GitHub profile for detailed implementations and documentation!`;
+      `• EdTech platform supporting 10,000+ concurrent users\n` +
+      `• AI-powered image processing with 95% accuracy\n` +
+      `• Real-time bidding marketplace application\n\n` +
+      `Check out the GitHub profile for detailed code examples and project repositories!`;
   }
 
-  private generateGeneralResponse(query: string, personalInfo: any): string {
-    return `🤖 **Suchandra's AI Portfolio Assistant** (Real-time Updates)\n\n` +
-      `I'm here to showcase **${personalInfo.name}**'s impressive journey in tech!\n\n` +
-      `**🎯 Quick Overview:**\n` +
-      `• ${personalInfo.title}\n` +
-      `• ${personalInfo.summary}\n` +
-      `• Currently: Final-year CS student at Aditya Engineering College\n\n` +
-      `**🚀 What makes Suchandra special:**\n` +
-      `• Proven track record with ${this.portfolioData.projects.length} successful projects\n` +
-      `• Full-stack expertise across ${this.portfolioData.skills.length} technology categories\n` +
-      `• Real-world impact: 10,000+ users served, 70% efficiency improvements\n` +
-      `• AWS certified with top 5% competitive programming ranking\n\n` +
-      `**💡 I can help you explore:**\n` +
-      `🔹 **Innovative Projects** with measurable business impact\n` +
-      `🔹 **Technical Skills** across the full development stack\n` +
-      `🔹 **Professional Experience** and internship achievements\n` +
-      `🔹 **Certifications** and competitive programming success\n` +
-      `🔹 **Contact Information** for collaboration opportunities\n\n` +
-      `*Data automatically updates when portfolio changes!*\n\nWhat interests you most?`;
+  private generateGeneralResponse(query: string): string {
+    // Analyze query for specific topics
+    if (query.toLowerCase().includes('achievement')) {
+      return `🏆 **Suchandra's Key Achievements:**\n\n` +
+        KNOWLEDGE_BASE.achievements.map(a => `• ${a}`).join('\n') +
+        `\n\nThese accomplishments demonstrate consistent excellence and continuous learning in the tech field.`;
+    }
+    
+    if (query.toLowerCase().includes('education')) {
+      return `🎓 **Education Background:**\n\n` +
+        `**Current:** ${KNOWLEDGE_BASE.personal.education}\n\n` +
+        `**Academic Focus:** Computer Science & Engineering with specialization in:\n` +
+        `• Software Development & Architecture\n` +
+        `• Mobile Application Engineering\n` +
+        `• AI/ML Implementation\n` +
+        `• Cloud Services Integration\n\n` +
+        `Suchandra has been actively involved in hackathons and technical events, representing the college at multiple institutions.`;
+    }
+    
+    // Default comprehensive response
+    return `I'm Suchandra's AI assistant, designed to help you explore her impressive portfolio! 🚀\n\n` +
+      `**Quick Overview:**\n` +
+      `• ${KNOWLEDGE_BASE.personal.summary}\n` +
+      `• Currently: ${KNOWLEDGE_BASE.personal.education}\n` +
+      `• Expertise: Full-stack development, Mobile apps, AI implementation\n\n` +
+      `**What I can help you discover:**\n` +
+      `🔹 **Projects:** Innovative solutions with measurable impact\n` +
+      `🔹 **Skills:** Comprehensive technical expertise\n` +
+      `🔹 **Experience:** Professional internships and achievements\n` +
+      `🔹 **Contact:** How to connect for opportunities\n\n` +
+      `What would you like to explore first?`;
   }
 }
 
-// Global instance with real-time updates
-const enhancedEngine = new EnhancedAIEngine();
-
 export async function enhancedChatCompletion(messages: ChatMessage[]): Promise<ChatResponse> {
-  // Realistic response time with speech processing consideration
-  await new Promise(resolve => setTimeout(resolve, Math.random() * 800 + 300));
+  // Simulate network delay for realistic experience
+  await new Promise(resolve => setTimeout(resolve, Math.random() * 1000 + 500));
   
+  const engine = new AIReasoningEngine();
   const lastUserMessage = messages.filter(m => m.role === 'user').pop();
   
   if (!lastUserMessage) {
     return {
-      message: "👋 Hi! I'm Suchandra's AI assistant with real-time portfolio updates. How can I help you explore his impressive tech journey?",
+      message: "I'm here to help you learn about Suchandra's portfolio. What would you like to know?",
       type: 'suggestion',
-      tokens: 25,
-      suggestions: ['Show me projects', 'What are your skills?', 'Tell me about experience', 'Contact information'],
+      tokens: 20,
+      suggestions: ['Tell me about projects', 'Show technical skills', 'Contact information'],
       confidence: 1.0
     };
   }
   
-  const intent = enhancedEngine.analyzeIntent(lastUserMessage.content);
-  return enhancedEngine.generateResponse(intent, lastUserMessage.content);
+  const intent = engine.analyzeIntent(lastUserMessage.content);
+  return engine.generateResponse(intent, lastUserMessage.content);
 }

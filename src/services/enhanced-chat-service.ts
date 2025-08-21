@@ -1,4 +1,5 @@
 // Enhanced chat service with advanced AI capabilities and portfolio-specific knowledge
+import { getChatCompletion } from './openai-service';
 
 interface ChatMessage {
   role: 'user' | 'assistant' | 'system';
@@ -61,17 +62,89 @@ const KNOWLEDGE_BASE = {
   },
 
   experience: {
-    "Flutter Internship": {
-      company: "Technical Hub",
-      duration: "June - July 2024",
-      mentors: ["Venkata Krishna sir", "Vasanth sir"],
-      description: "Engineered enterprise-class Java Application and Flutter E-commerce platform with Firebase authentication, delivering 40% performance optimization"
+    "Co-founder & Technical Lead": {
+      company: "Leez",
+      duration: "January 2024 - Present",
+      location: "Remote",
+      description: "Currently developing an innovative solution peer-to-peer marketplace revolutionizing on-demand rentals for local communities.",
+      responsibilities: [
+        "Leading the technical development of the marketplace platform",
+        "Designing and implementing the product architecture", 
+        "Making key decisions on technology stack and development roadmap",
+        "Building and managing the technical team",
+        "Ensuring platform scalability and user experience"
+      ],
+      technologies: ["React Native", "Node.js", "MongoDB", "AWS", "Payment APIs", "Geolocation Services"]
     },
-    "Java Internship": {
-      company: "Technical Hub", 
-      duration: "April 2024",
-      mentors: ["Pavan sir"],
-      description: "Architected a Java-based enterprise with multi-threaded data processing that achieved 70% efficiency improvement"
+    "Junior Developer": {
+      company: "Technical Hub",
+      duration: "August 2023 - Present", 
+      location: "Aditya Engineering College",
+      description: "Completed intensive 12-month technical apprenticeship at Technical Hub, mastering 7+ programming languages while delivering 5 client projects with 100% satisfaction rate as Junior Developer. Implemented version control systems, CI/CD & development methodologies.",
+      responsibilities: [
+        "Developing client projects using various programming languages",
+        "Implementing version control systems and CI/CD pipelines",
+        "Collaborating with senior developers on complex features",
+        "Participating in client meetings and requirement gathering",
+        "Contributing to code reviews and documentation"
+      ],
+      technologies: ["Git", "Jenkins", "Docker", "JavaScript", "Python", "Java", "React"]
+    },
+    "Flutter Development Intern": {
+      company: "Technical Hub",
+      duration: "June 2024 - July 2024",
+      location: "Aditya Engineering College", 
+      description: "Engineered enterprise-class Java Application and Flutter E-commerce platform with Firebase authentication, delivering 40% performance optimization through state management while collaborating in agile environments with 95% sprint completion rate.",
+      responsibilities: [
+        "Developing enterprise-class Java applications",
+        "Building Flutter E-commerce platform with Firebase integration",
+        "Implementing state management for performance optimization",
+        "Collaborating in agile development environments",
+        "Participating in sprint planning and code reviews"
+      ],
+      technologies: ["Flutter", "Java", "Firebase", "State Management", "Git", "Android Studio"]
+    },
+    "Java Developer Intern": {
+      company: "Technical Hub",
+      duration: "April 2024 - April 2024",
+      location: "Aditya Engineering College",
+      description: "Architected a Java-based enterprise with multi-threaded data processing that achieved 70% efficiency improvement by interactive dashboards, and dynamic filtering, transforming complex student data into actionable insights with 60% faster retrieval rates.",
+      responsibilities: [
+        "Architecting Java-based enterprise applications",
+        "Implementing multi-threaded data processing systems", 
+        "Developing interactive dashboards with dynamic filtering",
+        "Optimizing data retrieval performance",
+        "Transforming complex data into actionable insights"
+      ],
+      technologies: ["Java", "Multi-threading", "Data Processing", "Dashboard APIs", "Performance Optimization"]
+    },
+    "Program Coordinator": {
+      company: "Aditya University",
+      duration: "January 2023 - Present",
+      location: "Aditya Engineering College",
+      description: "Led LEO Club technical workshops as Program Coordinator, reaching 2500+ students by implementing improved event execution by 40% while developing team collaboration through stakeholder communication and data-driven decision-making processes.",
+      responsibilities: [
+        "Leading technical workshops for large student audiences",
+        "Coordinating with multiple stakeholders",
+        "Implementing data-driven decision-making processes", 
+        "Developing team collaboration strategies",
+        "Managing workshop logistics and execution"
+      ],
+      technologies: ["Workshop Management Tools", "Data Analytics", "Presentation Software", "Collaboration Platforms"]
+    },
+    "Event Coordinator": {
+      company: "Aditya University", 
+      duration: "March 2024 - March 2024",
+      location: "Aditya Engineering College",
+      description: "Directed Movie Marathon managing 15 volunteers and technical logistics for 24-hour screenings, increasing attendance by 35% through strategic digital marketing, budget allocation, vendor negotiations, and real-time analytic tracking for optimization.",
+      responsibilities: [
+        "Planning and coordinating all aspects of the movie marathon event",
+        "Managing a team of 15 volunteers",
+        "Implementing strategic digital marketing campaigns",
+        "Handling budget allocation and vendor negotiations", 
+        "Setting up real-time analytic tracking systems"
+      ],
+      technologies: ["Event Planning Tools", "Digital Marketing Platforms", "Analytics Tools", "Budget Management Systems"]
     }
   },
 
@@ -128,8 +201,14 @@ class AIReasoningEngine {
       return 'out-of-scope';
     }
     
+    // Experience-related keywords - Check this BEFORE projects to avoid conflicts
+    if (msg.includes('experience') || msg.includes('internship') || msg.includes('job') || 
+        msg.includes('work experience') || msg.includes('career') || msg.includes('employment')) {
+      return 'experience';
+    }
+    
     // Project-related keywords
-    if (msg.includes('project') || msg.includes('work') || msg.includes('build') || msg.includes('develop')) {
+    if (msg.includes('project') || msg.includes('build') || msg.includes('develop') || msg.includes('app')) {
       return 'projects';
     }
     
@@ -141,11 +220,6 @@ class AIReasoningEngine {
     // Contact-related keywords
     if (msg.includes('contact') || msg.includes('hire') || msg.includes('reach') || msg.includes('email')) {
       return 'contact';
-    }
-    
-    // Experience-related keywords
-    if (msg.includes('experience') || msg.includes('internship') || msg.includes('work') || msg.includes('job')) {
-      return 'experience';
     }
     
     // Code-related keywords
@@ -161,7 +235,7 @@ class AIReasoningEngine {
     return 'general';
   }
 
-  generateResponse(intent: string, specificQuery?: string): ChatResponse {
+  async generateResponse(intent: string, specificQuery?: string): Promise<ChatResponse> {
     let response = '';
     let suggestions: string[] = [];
     let type: 'text' | 'code' | 'suggestion' | 'info' = 'text';
@@ -204,7 +278,7 @@ class AIReasoningEngine {
         break;
         
       case 'out-of-scope':
-        response = this.generateOutOfScopeResponse(specificQuery || '');
+        response = await this.generateOutOfScopeResponse(specificQuery || '');
         suggestions = ['Tell me about Suchandra\'s projects', 'What are his skills?', 'How to contact him?'];
         type = 'text';
         break;
@@ -281,9 +355,12 @@ class AIReasoningEngine {
       Object.entries(experience).map(([role, details]) => 
         `🏢 **${role}** at ${details.company}\n` +
         `📅 ${details.duration}\n` +
-        `👨‍💼 Mentors: ${details.mentors?.join(', ')}\n` +
-        `📋 ${details.description}\n`
-      ).join('\n') +
+        `📍 ${details.location}\n` +
+        `📋 ${details.description}\n\n` +
+        `**Key Responsibilities:**\n` +
+        `${details.responsibilities.slice(0, 3).map(r => `• ${r}`).join('\n')}\n\n` +
+        `**Technologies:** ${details.technologies.join(', ')}\n`
+      ).join('\n\n') +
       `\n🏆 **Key Achievements:**\n` +
       KNOWLEDGE_BASE.achievements.slice(0, 3).map(a => `• ${a}`).join('\n') +
       `\n\n💪 Suchandra excels in cross-functional team collaboration and consistently meets critical deadlines while delivering high-quality solutions.`;
@@ -306,15 +383,28 @@ class AIReasoningEngine {
       `Check out the GitHub profile for detailed code examples and project repositories!`;
   }
 
-  private generateOutOfScopeResponse(query: string): string {
-    const responses = [
-      "I'm Suchandra's portfolio assistant, so I focus on his professional work and achievements. What would you like to know about his projects or skills?",
-      "That's not something I can help with, but I'd love to tell you about Suchandra's amazing tech projects! What interests you?",
-      "I'm here to showcase Suchandra's professional portfolio. How about we talk about his development skills or recent projects?",
-      "I only know about Suchandra's professional work and technical expertise. What aspect of his career would you like to explore?"
-    ];
-    
-    return responses[Math.floor(Math.random() * responses.length)];
+  private async generateOutOfScopeResponse(query: string): Promise<string> {
+    try {
+      // Use OpenAI for general questions not related to Suchandra's portfolio
+      const systemPrompt = `You are a helpful AI assistant. The user is asking a general question that's not related to a specific person's portfolio or career. Please provide a helpful and informative response. Keep your response conversational and informative.`;
+      
+      const messages: ChatMessage[] = [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: query }
+      ];
+      
+      const aiResponse = await getChatCompletion(messages);
+      return aiResponse;
+    } catch (error) {
+      console.error('Error getting AI response:', error);
+      // Fallback to original behavior if OpenAI fails
+      const responses = [
+        "I'm Suchandra's portfolio assistant, but I can try to help with general questions too! However, I'm experiencing some technical difficulties right now. What would you like to know about Suchandra's projects or skills?",
+        "I'd love to help with that, but I'm having some connectivity issues. In the meantime, would you like to learn about Suchandra's amazing tech projects?",
+      ];
+      
+      return responses[Math.floor(Math.random() * responses.length)];
+    }
   }
 
   private generateGeneralResponse(query: string): string {

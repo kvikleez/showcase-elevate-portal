@@ -13,6 +13,7 @@ import Experience from "./pages/Experience";
 import Contact from "./pages/Contact";
 import Certificates from "./pages/Certificates";
 import CertificateDetail from "./pages/CertificateDetail";
+import ProjectDetail from "./pages/ProjectDetail";
 import NotFound from "./pages/NotFound";
 import PageTransition from "./components/ui/PageTransition";
 
@@ -41,6 +42,7 @@ const AnimatedRoutes = () => {
         <Route path="/contact" element={<PageTransition><Contact /></PageTransition>} />
         <Route path="/certificates" element={<PageTransition><Certificates /></PageTransition>} />
         <Route path="/certificates/:id" element={<PageTransition><CertificateDetail /></PageTransition>} />
+        <Route path="/projects/:id" element={<PageTransition><ProjectDetail /></PageTransition>} />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
       </Routes>

@@ -50,11 +50,12 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
       onHoverEnd={() => setIsHovered(false)}
       onMouseMove={handleMouseMove}
       className={cn(
-        "group relative flex flex-col rounded-2xl overflow-hidden border border-white/10 backdrop-blur-sm h-full transition-all",
+        "group relative flex flex-col rounded-2xl overflow-hidden border border-white/10 backdrop-blur-sm h-full transition-all transform-gpu will-change-transform",
         featured 
           ? "md:flex-row md:min-h-[24rem] glass-effect" 
           : "glass-effect"
       )}
+      style={{ isolation: 'isolate', zIndex: isHovered ? 10 : 1 }}
     >
       {/* Mouse follow effect */}
       <motion.div 

@@ -6,10 +6,16 @@ export interface Certificate {
   date: string;
   category: 'technical' | 'participation';
   description: string;
-  imageUrl: string;
-  credentialUrl?: string;
+  imageUrl: string; // Thumbnail/preview image
+  pdfUrl?: string; // Local PDF file path
+  credentialUrl?: string; // External credential verification URL
   skills?: string[];
+  // Asset filenames for local storage
+  pdfFilename?: string;
+  thumbnailFilename?: string;
 }
+
+import AssetManager from '@/utils/AssetManager';
 
 export const certificates: Certificate[] = [
   // Technical Certificates from your resume
@@ -20,7 +26,10 @@ export const certificates: Certificate[] = [
     date: 'December 2023',
     category: 'technical',
     description: 'Comprehensive course on privacy and security aspects of online social media platforms.',
-    imageUrl: 'https://i.ibb.co/RkY4d4xj/Timetable.png',
+    imageUrl: AssetManager.getCertificateImagePath('nptel-privacy-security.jpg'),
+    pdfUrl: AssetManager.getCertificatePdfPath('technical', 'nptel-privacy-security.pdf'),
+    pdfFilename: 'nptel-privacy-security.pdf',
+    thumbnailFilename: 'nptel-privacy-security.jpg',
     credentialUrl: '#',
     skills: ['Privacy', 'Security', 'Social Media']
   },
@@ -31,7 +40,10 @@ export const certificates: Certificate[] = [
     date: 'July 2024',
     category: 'technical',
     description: 'Professional internship certificate for Flutter development with enterprise applications.',
-    imageUrl: 'https://i.ibb.co/RkY4d4xj/Timetable.png',
+    imageUrl: AssetManager.getCertificateImagePath('flutter-internship.jpg'),
+    pdfUrl: AssetManager.getCertificatePdfPath('technical', 'flutter-internship.pdf'),
+    pdfFilename: 'flutter-internship.pdf',
+    thumbnailFilename: 'flutter-internship.jpg',
     credentialUrl: '#',
     skills: ['Flutter', 'Mobile Development', 'Firebase']
   },
@@ -42,7 +54,10 @@ export const certificates: Certificate[] = [
     date: 'November 2023',
     category: 'technical',
     description: 'Comprehensive training on PHP programming and MySQL database management.',
-    imageUrl: 'https://i.ibb.co/RkY4d4xj/Timetable.png',
+    imageUrl: AssetManager.getCertificateImagePath('php-mysql-training.jpg'),
+    pdfUrl: AssetManager.getCertificatePdfPath('technical', 'php-mysql-training.pdf'),
+    pdfFilename: 'php-mysql-training.pdf',
+    thumbnailFilename: 'php-mysql-training.jpg',
     credentialUrl: '#',
     skills: ['PHP', 'MySQL', 'Web Development']
   },
@@ -352,7 +367,10 @@ export const certificates: Certificate[] = [
     date: 'March 2024',
     category: 'participation',
     description: 'Creative competition focused on brand taglines and marketing slogans.',
-    imageUrl: 'https://i.ibb.co/RkY4d4xj/Timetable.png',
+    imageUrl: AssetManager.getCertificateImagePath('brandquetz-19.jpg'),
+    pdfUrl: AssetManager.getCertificatePdfPath('participation', 'brandquetz-19.pdf'),
+    pdfFilename: 'brandquetz-19.pdf',
+    thumbnailFilename: 'brandquetz-19.jpg',
     credentialUrl: '#',
     skills: ['Creative Writing', 'Brand Marketing', 'Competition']
   },
@@ -363,7 +381,10 @@ export const certificates: Certificate[] = [
     date: 'February 2024',
     category: 'participation',
     description: 'Competitive programming challenge and algorithm optimization.',
-    imageUrl: 'https://i.ibb.co/RkY4d4xj/Timetable.png',
+    imageUrl: AssetManager.getCertificateImagePath('codequetz-14.jpg'),
+    pdfUrl: AssetManager.getCertificatePdfPath('participation', 'codequetz-14.pdf'),
+    pdfFilename: 'codequetz-14.pdf',
+    thumbnailFilename: 'codequetz-14.jpg',
     credentialUrl: '#',
     skills: ['Competitive Programming', 'Algorithms', 'Problem Solving']
   },

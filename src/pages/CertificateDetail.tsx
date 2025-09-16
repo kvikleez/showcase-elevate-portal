@@ -2,16 +2,21 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Calendar, Award, ExternalLink } from 'lucide-react';
+import { ArrowLeft, Calendar, Award, ExternalLink, FileText, Download } from 'lucide-react';
 import { certificates, Certificate } from '@/data/certificates';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
+import PdfViewer from '@/components/ui/PdfViewer';
+import { Button } from '@/components/ui/button';
+import { useToast } from '@/hooks/use-toast';
 
 const CertificateDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [certificate, setCertificate] = useState<Certificate | null>(null);
   const [relatedCertificates, setRelatedCertificates] = useState<Certificate[]>([]);
+  const [viewMode, setViewMode] = useState<'image' | 'pdf'>('pdf'); // Default to PDF view
+  const { toast } = useToast();
   
   useEffect(() => {
     // Scroll to top when component mounts
@@ -35,6 +40,30 @@ const CertificateDetail: React.FC = () => {
     }
   }, [id, navigate]);
   
+  const handleDownloadPdf = () => {
+    if (!certificate?.pdfUrl) {
+      toast({
+        title: "PDF Not Available",
+        description: "The PDF for this certificate is not available yet.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    const link = document.createElement('a');
+    link.href = certificate.pdfUrl;
+    link.download = `${certificate.title}.pdf`;
+    link.target = '_blank';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    toast({
+      title: "Download Started",
+      description: `Downloading ${certificate.title} certificate`,
+    });
+  };
+
   if (!certificate) {
     return null; // Loading or redirecting
   }
@@ -61,7 +90,7 @@ const CertificateDetail: React.FC = () => {
           
           {/* Certificate Detail */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Certificate Image */}
+            {/* Certificate Display Area */}
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -69,36 +98,83 @@ const CertificateDetail: React.FC = () => {
               className="lg:col-span-1 relative"
             >
               <div className="sticky top-24">
-                <div className="relative rounded-xl overflow-hidden border border-white/10 h-full">
-                  <div className="aspect-w-4 aspect-h-3">
-                    <img 
-                      src={certificate.imageUrl} 
-                      alt={certificate.title} 
-                      className="w-full h-full object-cover"
+                {/* View Mode Toggle */}
+                <div className="mb-4 flex items-center gap-2 p-1 bg-muted/50 rounded-lg">
+                  <Button
+                    variant={viewMode === 'pdf' ? 'default' : 'ghost'}
+                    size="sm"
+                    onClick={() => setViewMode('pdf')}
+                    className="flex-1"
+                    disabled={!certificate.pdfUrl}
+                  >
+                    <FileText className="w-4 h-4 mr-1" />
+                    PDF View
+                  </Button>
+                  <Button
+                    variant={viewMode === 'image' ? 'default' : 'ghost'}
+                    size="sm"
+                    onClick={() => setViewMode('image')}
+                    className="flex-1"
+                  >
+                    <Award className="w-4 h-4 mr-1" />
+                    Thumbnail
+                  </Button>
+                </div>
+
+                {/* Content Display */}
+                <div className="relative rounded-xl overflow-hidden border border-white/10">
+                  {viewMode === 'pdf' ? (
+                    <PdfViewer
+                      pdfUrl={certificate.pdfUrl}
+                      title={certificate.title}
+                      className="min-h-[500px]"
+                      showControls={true}
                     />
-                  </div>
-                  <div className="absolute top-0 left-0 right-0 p-4">
-                    <div className="px-3 py-1.5 rounded-full text-xs font-medium inline-flex items-center bg-white/10 backdrop-blur-md">
-                      {certificate.category === 'technical' ? (
-                        <Award className="h-3 w-3 mr-1.5 text-primary" />
-                      ) : (
-                        <Award className="h-3 w-3 mr-1.5 text-accent" />
-                      )}
-                      {certificate.category === 'technical' ? 'Technical Certificate' : 'Participation Certificate'}
-                    </div>
-                  </div>
-                  {certificate.credentialUrl && (
-                    <div className="absolute bottom-0 left-0 right-0 p-4">
-                      <a 
-                        href={certificate.credentialUrl} 
-                        target="_blank" 
-                        rel="noopener noreferrer" 
-                        className="w-full flex items-center justify-center px-4 py-2 rounded-lg bg-white/10 backdrop-blur-md hover:bg-white/20 transition-colors text-white text-sm font-medium border border-white/10"
-                      >
-                        <ExternalLink className="h-4 w-4 mr-2" />
-                        View Credential
-                      </a>
-                    </div>
+                  ) : (
+                    <>
+                      <div className="aspect-w-4 aspect-h-3">
+                        <img 
+                          src={certificate.imageUrl} 
+                          alt={certificate.title} 
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div className="absolute top-0 left-0 right-0 p-4">
+                        <div className="px-3 py-1.5 rounded-full text-xs font-medium inline-flex items-center bg-white/10 backdrop-blur-md">
+                          {certificate.category === 'technical' ? (
+                            <Award className="h-3 w-3 mr-1.5 text-primary" />
+                          ) : (
+                            <Award className="h-3 w-3 mr-1.5 text-accent" />
+                          )}
+                          {certificate.category === 'technical' ? 'Technical Certificate' : 'Participation Certificate'}
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
+
+                {/* Action Buttons */}
+                <div className="mt-4 flex gap-2">
+                  {certificate.pdfUrl && (
+                    <Button
+                      onClick={handleDownloadPdf}
+                      variant="outline"
+                      className="flex-1"
+                    >
+                      <Download className="w-4 h-4 mr-2" />
+                      Download PDF
+                    </Button>
+                  )}
+                  
+                  {certificate.credentialUrl && certificate.credentialUrl !== '#' && (
+                    <Button
+                      variant="outline"
+                      className="flex-1"
+                      onClick={() => window.open(certificate.credentialUrl, '_blank')}
+                    >
+                      <ExternalLink className="w-4 h-4 mr-2" />
+                      Verify
+                    </Button>
                   )}
                 </div>
               </div>

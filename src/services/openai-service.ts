@@ -16,22 +16,17 @@ interface ChatCompletionResponse {
 
 export async function getChatCompletion(messages: ChatMessage[]): Promise<string> {
   try {
-    // In a production environment, this should call your own backend API
-    // that handles the API key securely, never exposing it to the frontend.
-    // For demonstration purposes, we'll use a mock implementation 
-    // DO NOT USE this approach in production. Always use a backend service.
-    
-    // This is a mock implementation for demonstration
-    const response = await fetch('/api/chat', {
+    const response = await fetch('https://habnpuephuurcqkwblor.supabase.co/functions/v1/chat', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhhYm5wdWVwaHV1cmNxa3dibG9yIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI4NDM4NzMsImV4cCI6MjA3ODQxOTg3M30.-56VyiVBHqlzFTjsx1SCbfWrB4P0wgUc19hO7BsNeZg`,
       },
       body: JSON.stringify({ messages }),
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
+      const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
       throw new Error(errorData.error || 'Failed to get response from AI');
     }
 

@@ -28,7 +28,7 @@ const EnhancedChatbot: React.FC = () => {
     { 
       id: '1', 
       sender: 'bot', 
-      text: "Hello! I'm Suchandra's AI assistant. I can help you explore projects, skills, experience, and more. What would you like to know?",
+      text: "Hello! I'm Suchandra Assistant. I can help you explore projects, skills, experience, certifications, and even answer general questions about the world. What would you like to know?",
       timestamp: new Date()
     }
   ]);
@@ -160,8 +160,8 @@ const EnhancedChatbot: React.FC = () => {
                     <Sparkles className="h-4 w-4 text-primary" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-sm">AI Assistant</h3>
-                    <p className="text-xs text-muted-foreground">Powered by Gemini</p>
+                    <h3 className="font-semibold text-sm">Suchandra Assistant</h3>
+                    <p className="text-xs text-muted-foreground">Powered by OpenAI</p>
                   </div>
                 </div>
                 <Button variant="ghost" size="sm" onClick={toggleChat} className="h-7 w-7 p-0 hover:bg-muted/50">

@@ -109,21 +109,20 @@ const AboutSection: React.FC = () => {
 
               <div className="space-y-6 text-lg text-muted-foreground leading-relaxed">
                 <p>
-                  I'm a third-year B.Tech CSE student at Aditya Engineering College with a deep passion for 
-                  creating innovative solutions that bridge cutting-edge technology with exceptional user experiences. 
-                  My journey began with curiosity about how technology can transform lives, and that curiosity 
-                  continues to drive my pursuit of excellence.
+                  I'm a final-year B.Tech CSE student at Aditya Engineering College with proven expertise in 
+                  full-stack software development and mobile application engineering. Proficient in Flutter, ReactJS, 
+                  and Java frameworks with experience delivering multiple client projects in agile environments.
                 </p>
                 <p>
-                  Specializing in full-stack development, mobile engineering, and artificial intelligence, 
-                  I've successfully delivered <span className="text-primary font-semibold">10+ projects</span> 
-                  while maintaining a focus on performance optimization and user-centric design. My expertise 
-                  spans modern frameworks, cloud technologies, and emerging AI implementations.
+                  My journey in tech has led to consistently improving application performance by 20% while reducing 
+                  development cycles through efficient code optimization. Specializing in mobile engineering, and AI, 
+                  I've successfully delivered <span className="text-primary font-semibold">7+ major projects</span> 
+                  including HOOT 2.0 (10,000+ users) and S-TRACK (18,000+ users).
                 </p>
                 <p>
-                  Beyond coding, I'm actively engaged in the tech community, participating in hackathons, 
-                  mentoring fellow students, and contributing to open-source projects. I believe in the 
-                  power of collaboration and continuous learning to push the boundaries of what's possible.
+                  Beyond coding, I'm the LEO Club Program Coordinator reaching 2500+ students, a college representative 
+                  at multiple hackathons (KL, GIET, JNTUK, JNTUV), and currently developing "Leez" - an innovative P2P 
+                  rental marketplace startup. I've solved 500+ problems on competitive platforms and ranked in top 5% globally.
                 </p>
               </div>
             </div>
@@ -131,8 +130,8 @@ const AboutSection: React.FC = () => {
             {/* Stats Section */}
             <div className="grid grid-cols-2 gap-6 py-6">
               <div className="text-center">
-                <div className="text-3xl font-bold text-primary mb-2">10+</div>
-                <div className="text-sm text-muted-foreground">Projects Completed</div>
+                <div className="text-3xl font-bold text-primary mb-2">7+</div>
+                <div className="text-sm text-muted-foreground">Major Projects</div>
               </div>
               <div className="text-center">
                 <div className="text-3xl font-bold text-accent mb-2">30+</div>
@@ -140,11 +139,11 @@ const AboutSection: React.FC = () => {
               </div>
               <div className="text-center">
                 <div className="text-3xl font-bold text-primary mb-2">500+</div>
-                <div className="text-sm text-muted-foreground">Coding Problems</div>
+                <div className="text-sm text-muted-foreground">Problems Solved</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-accent mb-2">5+</div>
-                <div className="text-sm text-muted-foreground">Hackathons Won</div>
+                <div className="text-3xl font-bold text-accent mb-2">Top 5%</div>
+                <div className="text-sm text-muted-foreground">Global Ranking</div>
               </div>
             </div>
 

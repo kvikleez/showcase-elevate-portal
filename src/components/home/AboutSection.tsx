@@ -1,8 +1,8 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
 import SectionHeading from '@/components/ui/SectionHeading';
 import { Sparkles, Lightbulb, Code, Laptop, Award, Users, Target, Rocket } from 'lucide-react';
+import suchandraCasual from '@/assets/profile/suchandra-casual.png';
 
 const AboutSection: React.FC = () => {
   return (
@@ -36,7 +36,7 @@ const AboutSection: React.FC = () => {
               {/* Main image container */}
               <div className="glass-effect rounded-3xl overflow-hidden relative z-10 border border-white/10">
                 <img 
-                  src="https://i.postimg.cc/mDZjf4Kk/317kb.jpg" 
+                  src={suchandraCasual} 
                   alt="Suchandra Etti - Professional Developer" 
                   className="w-full h-full object-cover aspect-[4/5] hover:scale-105 transition-transform duration-700"
                 />

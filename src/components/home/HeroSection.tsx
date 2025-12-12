@@ -4,6 +4,7 @@ import { ArrowDown, ExternalLink, Github, Sparkles } from 'lucide-react';
 import * as THREE from 'three';
 import { useToast } from "@/hooks/use-toast";
 import ResumeButton from '../ui/ResumeButton';
+import suchandraMain from '@/assets/profile/suchandra-main.png';
 
 const HeroSection: React.FC = () => {
   const heroRef = useRef<HTMLDivElement>(null);
@@ -462,7 +463,7 @@ const HeroSection: React.FC = () => {
               {/* Image */}
               <div className="relative z-20 w-80 h-80 md:w-96 md:h-96 lg:w-[420px] lg:h-[420px] rounded-full overflow-hidden border-4 border-white/20 backdrop-blur-sm shadow-2xl">
                 <img 
-                  src="https://i.postimg.cc/mDZjf4Kk/317kb.jpg" 
+                  src={suchandraMain} 
                   alt="Suchandra Etti - Full Stack Developer" 
                   className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
                 />

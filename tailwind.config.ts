@@ -21,8 +21,6 @@ export default {
 		extend: {
 			fontFamily: {
 				sans: ['Inter', 'system-ui', 'sans-serif'],
-				display: ['Space Grotesk', 'system-ui', 'sans-serif'],
-				mono: ['JetBrains Mono', 'monospace'],
 			},
 			colors: {
 				border: 'hsl(var(--border))',
@@ -72,15 +70,7 @@ export default {
 			borderRadius: {
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',
-				sm: 'calc(var(--radius) - 4px)',
-				'2xl': '1rem',
-				'3xl': '1.5rem',
-			},
-			boxShadow: {
-				'glow-sm': '0 0 20px hsl(var(--primary) / 0.2)',
-				'glow': '0 0 40px hsl(var(--primary) / 0.3)',
-				'glow-lg': '0 0 60px hsl(var(--primary) / 0.4)',
-				'glow-accent': '0 0 40px hsl(var(--accent) / 0.3)',
+				sm: 'calc(var(--radius) - 4px)'
 			},
 			keyframes: {
 				'accordion-down': {
@@ -122,26 +112,6 @@ export default {
 				'slide-down': {
 					'0%': { transform: 'translateY(0)' },
 					'100%': { transform: 'translateY(100%)' }
-				},
-				'float': {
-					'0%, 100%': { transform: 'translateY(0) rotate(0deg)' },
-					'50%': { transform: 'translateY(-15px) rotate(2deg)' }
-				},
-				'pulse-glow': {
-					'0%, 100%': { boxShadow: '0 0 20px hsl(var(--primary) / 0.3)' },
-					'50%': { boxShadow: '0 0 40px hsl(var(--primary) / 0.6)' }
-				},
-				'spin-slow': {
-					from: { transform: 'rotate(0deg)' },
-					to: { transform: 'rotate(360deg)' }
-				},
-				'gradient-x': {
-					'0%, 100%': { backgroundPosition: '0% 50%' },
-					'50%': { backgroundPosition: '100% 50%' }
-				},
-				'shimmer': {
-					'0%': { backgroundPosition: '-200% 0' },
-					'100%': { backgroundPosition: '200% 0' }
 				}
 			},
 			animation: {
@@ -154,12 +124,7 @@ export default {
 				'slide-in': 'slide-in 0.3s ease-out',
 				'slide-out': 'slide-out 0.3s ease-out',
 				'slide-up': 'slide-up 0.3s ease-out',
-				'slide-down': 'slide-down 0.3s ease-out',
-				'float': 'float 6s ease-in-out infinite',
-				'pulse-glow': 'pulse-glow 2s ease-in-out infinite',
-				'spin-slow': 'spin-slow 20s linear infinite',
-				'gradient-x': 'gradient-x 3s ease infinite',
-				'shimmer': 'shimmer 2s linear infinite'
+				'slide-down': 'slide-down 0.3s ease-out'
 			}
 		}
 	},

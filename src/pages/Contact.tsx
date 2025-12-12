@@ -113,7 +113,7 @@ const Contact = () => {
                       </div>
                       <div>
                         <h3 className="font-medium">Location</h3>
-                        <p className="text-muted-foreground">Aditya Engineering College, Andhra Pradesh, India</p>
+                        <p className="text-muted-foreground">Aditya Engineering College, Mandapeta, Andhra Pradesh, India</p>
                       </div>
                     </div>
                     
@@ -123,8 +123,8 @@ const Contact = () => {
                       </div>
                       <div>
                         <h3 className="font-medium">Email</h3>
-                        <a href="mailto:suchandra@example.com" className="text-muted-foreground hover:text-primary transition-colors">
-                          ettisnvvsuchandra@gmail.com
+                        <a href="mailto:snvvs369@gmail.com" className="text-muted-foreground hover:text-primary transition-colors">
+                          snvvs369@gmail.com
                         </a>
                       </div>
                     </div>
@@ -135,8 +135,8 @@ const Contact = () => {
                       </div>
                       <div>
                         <h3 className="font-medium">Phone</h3>
-                        <a href="tel:+919876543210" className="text-muted-foreground hover:text-primary transition-colors">
-                          +91 95XX XXXXX
+                        <a href="tel:+917989635988" className="text-muted-foreground hover:text-primary transition-colors">
+                          +91 7989635988
                         </a>
                       </div>
                     </div>
@@ -169,7 +169,7 @@ const Contact = () => {
                     </motion.a>
                     
                     <motion.a
-                      href="#"
+                      href="https://instagram.com/suchandra369"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="p-3 rounded-full glass-effect text-foreground hover:text-[#E4405F] transition-colors border border-white/10"
@@ -180,7 +180,7 @@ const Contact = () => {
                     </motion.a>
                     
                     <motion.a
-                      href="#"
+                      href="https://twitter.com/snvvs369"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="p-3 rounded-full glass-effect text-foreground hover:text-[#1DA1F2] transition-colors border border-white/10"

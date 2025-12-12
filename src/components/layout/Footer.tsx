@@ -1,7 +1,6 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Github, Linkedin, Twitter, Mail, ArrowUpRight } from 'lucide-react';
+import { Github, Linkedin, Twitter, Mail, ArrowUpRight, Instagram, Youtube, Code } from 'lucide-react';
 
 const Footer: React.FC = () => {
   return (
@@ -12,13 +11,15 @@ const Footer: React.FC = () => {
           <div>
             <h2 className="text-xl font-bold tracking-tight mb-4">Suchandra Etti</h2>
             <p className="text-muted-foreground mb-4">
-              A passionate B.Tech CSE student with a flair for technology and innovation.
+              Final-year B.Tech CSE student passionate about full-stack development, mobile engineering, and AI innovation.
             </p>
-            <div className="flex space-x-4">
+            <div className="flex flex-wrap gap-2">
               <SocialIcon href="https://github.com/SnvvSuchandraEtti" icon={<Github className="h-5 w-5" />} label="GitHub" />
-              <SocialIcon href="https://www.linkedin.com/in/suchandra-etti/" icon={<Linkedin className="h-5 w-5" />} label="LinkedIn" />
-              <SocialIcon href="https://x.com/snvvs369" icon={<Twitter className="h-5 w-5" />} label="Twitter" />
-              <SocialIcon href="mailto:snvvvs369@gmail.com" icon={<Mail className="h-5 w-5" />} label="Email" />
+              <SocialIcon href="https://linkedin.com/in/suchandra-etti" icon={<Linkedin className="h-5 w-5" />} label="LinkedIn" />
+              <SocialIcon href="https://twitter.com/snvvs369" icon={<Twitter className="h-5 w-5" />} label="Twitter" />
+              <SocialIcon href="https://instagram.com/suchandra369" icon={<Instagram className="h-5 w-5" />} label="Instagram" />
+              <SocialIcon href="https://leetcode.com/u/snvvsuchandraetti/" icon={<Code className="h-5 w-5" />} label="LeetCode" />
+              <SocialIcon href="mailto:snvvs369@gmail.com" icon={<Mail className="h-5 w-5" />} label="Email" />
             </div>
           </div>
 
@@ -59,8 +60,8 @@ const Footer: React.FC = () => {
             <h3 className="text-lg font-semibold mb-4">Contact Information</h3>
             <ul className="space-y-2 text-muted-foreground">
               <li>
-                <a href="mailto:snvvvs369@gmail.com" className="hover:text-primary transition-colors inline-flex items-center">
-                  snvvvs369@gmail.com <ArrowUpRight className="ml-1 h-3 w-3" />
+                <a href="mailto:snvvs369@gmail.com" className="hover:text-primary transition-colors inline-flex items-center">
+                  snvvs369@gmail.com <ArrowUpRight className="ml-1 h-3 w-3" />
                 </a>
               </li>
               <li>
@@ -68,7 +69,12 @@ const Footer: React.FC = () => {
                   +91 7989635988 <ArrowUpRight className="ml-1 h-3 w-3" />
                 </a>
               </li>
-              <li>Aditya University</li>
+              <li>
+                <a href="https://linktr.ee/snvvs369" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors inline-flex items-center">
+                  All Links (Linktree) <ArrowUpRight className="ml-1 h-3 w-3" />
+                </a>
+              </li>
+              <li>Aditya Engineering College, Mandapeta</li>
               <li>Andhra Pradesh, India</li>
             </ul>
           </div>
